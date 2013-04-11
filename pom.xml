@@ -561,6 +561,12 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
+					<webappDirectory>
+						${project.basedir}/src/main/webapp
+					</webappDirectory>
+					<warSourceDirectory>
+						${project.basedir}/src/main/webapp
+					</warSourceDirectory>
 					<warName>${project.artifactId}</warName>
 				</configuration>
 			</plugin>
@@ -685,9 +691,9 @@
 	<!-- 开发者信息 -->
 	<developers>  
 		<developer>
-			<id>thinkgem</id>
-			<name>WangZhen</name>
-			<email>thinkgem at 163.com</email>
+			<id>openeap</id>
+			<name>lcw</name>
+			<email>luochengwei at gmail.com</email>
 			<roles><role>Project lead</role></roles>
 			<timezone>+8</timezone>  
 		</developer>
