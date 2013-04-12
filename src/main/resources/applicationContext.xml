@@ -17,14 +17,14 @@
 	<context:property-placeholder ignore-unresolvable="true" location="classpath*:/application.properties" />
 	
 	<!-- 使用Annotation自动注册Bean，解决事物失效问题：在主容器中不扫描@Controller注解，在SpringMvc中只扫描@Controller注解。  -->
-	<context:component-scan base-package="com.thinkgem.jeesite"><!-- base-package 如果多个，用“,”分隔 -->
+	<context:component-scan base-package="com.openeap"><!-- base-package 如果多个，用“,”分隔 -->
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 	
 	<!-- 数据库方言配置，自动获取数据库方言 -->
 	<bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 		<property name="databasePlatform">
-			<bean factory-method="getDialect" class="com.thinkgem.jeesite.common.persistence.Hibernates">
+			<bean factory-method="getDialect" class="com.openeap.common.persistence.Hibernates">
 				<constructor-arg ref="dataSource"/>
 			</bean>
 		</property>
@@ -34,7 +34,7 @@
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"> 
 		<property name="dataSource" ref="dataSource"/>
 		<property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter"/> 
-		<property name="packagesToScan" value="com.thinkgem.jeesite"/><!-- 如果多个，用“,”分隔 -->
+		<property name="packagesToScan" value="com.openeap"/><!-- 如果多个，用“,”分隔 -->
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
@@ -49,7 +49,7 @@
 	</bean>
 	
 	<!-- 配置 Spring Data JPA， base-package 如果多个，用“,”分隔 -->
- 	<jpa:repositories base-package="com.thinkgem.jeesite"  transaction-manager-ref="transactionManager"
+ 	<jpa:repositories base-package="com.openeap"  transaction-manager-ref="transactionManager"
  		entity-manager-factory-ref="entityManagerFactory"/>
    
 	<!-- 配置 JPA Transaction -->
@@ -115,7 +115,7 @@
 		</bean>
 		
 		<!-- 数据源配置, 使用应用服务器的数据库连接池 
-		<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/jeesite" />-->
+		<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/openeap" />-->
 	
 		<!-- 数据源配置, 不使用连接池 
 		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

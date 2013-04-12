@@ -17,7 +17,7 @@
 	</bean>
 
 	<!-- 项目自定义的 Realm （depend-on用来表示一个Bean的实例化依靠另一个Bean先实例化）。-->
-	<bean id="systemRealm" class="com.thinkgem.jeesite.modules.sys.security.SystemRealm"  depends-on="userDao,roleDao,menuDao">
+	<bean id="systemRealm" class="com.openeap.modules.sys.security.SystemRealm"  depends-on="userDao,roleDao,menuDao">
 		<property name="systemService" ref="systemService"/>
 	</bean>
 	
