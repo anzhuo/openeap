@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache updateCheck="false" name="customCache">
 
-	<diskStore path="java.io.tmpdir/jeesite/ehcache/custom" />
+	<diskStore path="java.io.tmpdir/openeap/ehcache/custom" />
 
 	<!-- DefaultCache setting. -->
 	<defaultCache maxEntriesLocalHeap="10000" eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="600"
