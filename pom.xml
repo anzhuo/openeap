@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>com.thinkgem.jeesite</groupId>
-	<artifactId>jeesite</artifactId>
+	<artifactId>openeap</artifactId>
 	<version>1.0.0</version>
 	<packaging>war</packaging>
-	<name>JeeSite</name>
-	<url>http://thinkgem.github.com/jeesite</url>
+	<name>openeap</name>
+	<url>http://www.openeap.com</url>
     
 	<!-- 项目属性 -->
 	<properties>
@@ -560,13 +560,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.3</version>
+				
 				<configuration>
-					<webappDirectory>
-						${project.basedir}/src/main/webapp
-					</webappDirectory>
-					<warSourceDirectory>
-						${project.basedir}/src/main/webapp
-					</warSourceDirectory>
+					<!-- 定义输出目录 -->
+					<webappDirectory>${project.basedir}/src/main/webapp</webappDirectory>
+					<webappDirectory>${project.basedir}/src/main/webapp</webappDirectory>
+					<archive>  
+					  <addMavenDescriptor>false</addMavenDescriptor>  
+					</archive> 
 					<warName>${project.artifactId}</warName>
 				</configuration>
 			</plugin>
@@ -626,6 +627,22 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>2.5</version>
+				<configuration>
+			      <filesets>
+			        <fileset>
+			          <directory>${project.basedir}/src/main/webapp/WEB-INF/lib</directory>
+			          <includes>
+			            <include>**/*.jar</include>
+			          </includes>
+			          <excludes>
+			            <exclude>**/IKAnalyzer2012_u6.jar</exclude>
+			            <exclude>**/apache-ant-zip.jar</exclude>
+			            <exclude>**/CKFinder*.jar</exclude>
+			          </excludes>
+			          <followSymlinks>false</followSymlinks>
+			        </fileset>
+			      </filesets>
+			    </configuration>
 			</plugin>
 			
 			<!-- ant插件 -->
