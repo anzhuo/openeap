@@ -74,7 +74,7 @@
 			</div>
 		</div>
 	    <div id="footer" class="row-fluid">
-            Copyright &copy; 2012-${fns:getConfig('copyrightYear')} <a href="http://thinkgem.iteye.com" target="_blank">ThinkGem</a> - Powered By <a href="https://github.com/thinkgem/jeesite" target="_blank">JeeSite</a> ${fns:getConfig('version')}
+            Copyright &copy; 2012-${fns:getConfig('copyrightYear')} <a href="http://www.openeap.com" target="_blank">openEAP</a> - Powered By <a href="https://www.openeap.com" target="_blank">openEAP</a> ${fns:getConfig('version')}
 		</div>
 	</div>
 	<script type="text/javascript"> 

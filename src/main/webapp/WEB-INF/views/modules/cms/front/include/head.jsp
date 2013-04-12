@@ -13,7 +13,7 @@
 	<script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
 	<!--[if lte IE 6]><link href="${ctxStatic}/bootstrap/bsie/css/bootstrap-ie6.min.css" type="text/css" rel="stylesheet" />
 	<script src="${ctxStatic}/bootstrap/bsie/js/bootstrap-ie.min.js" type="text/javascript"></script><![endif]-->
-	<link href="${ctxStatic}/common/jeesite.min.css" type="text/css" rel="stylesheet" />
+	<link href="${ctxStatic}/common/openeap.min.css" type="text/css" rel="stylesheet" />
 </c:if>
 <link href="${ctxStaticFront}/themes/${site.theme}/style.min.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStaticFront}/themes/${site.theme}/script.min.js" type="text/javascript"></script>

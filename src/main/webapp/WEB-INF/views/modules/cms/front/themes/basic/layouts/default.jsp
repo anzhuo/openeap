@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><sitemesh:title default="欢迎光临"/> - ${site.title} - Powered By JeeSite</title>
+	<title><sitemesh:title default="欢迎光临"/> - ${site.title} - Powered By openEAP</title>
 	<%@include file="/WEB-INF/views/modules/cms/front/include/head.jsp" %>
 	<!-- Baidu tongji analytics --><script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="//hm.baidu.com/hm.js?82116c626a8d504a5c0675073362ef6f";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();</script>
 	<sitemesh:head/>
@@ -13,7 +13,7 @@
 	<div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="${ctx}">JeeSite Web</a>
+          <a class="brand" href="${ctx}">openEAP Web</a>
           <div class="nav-collapse">
             <ul id="main_nav" class="nav">
              	<li class="${empty category.id?'active':''}"><a href="${ctx}/index-${site.id}${fns:getUrlSuffix()}"><span>首  页</span></a></li>
