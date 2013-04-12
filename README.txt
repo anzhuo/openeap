@@ -1,15 +1,15 @@
-#JeeSite 企业信息管理系统基础框架
+#openEAP 企业信息管理系统基础框架
 =======
 
 ##框架简介
 
-JeeSite 是一个 **开源的企业信息管理系统** 基础框架。主要定位于“企业信息管理”领域，可用作企业信息管理类系统、网站后台管理类系统等。JeeSite是非常强调开发的高效性、健壮性和安全性的。
+openEAP 是一个 **开源的企业信息管理系统** 基础框架。主要定位于“企业信息管理”领域，可用作企业信息管理类系统、网站后台管理类系统等。JeeSite是非常强调开发的高效性、健壮性和安全性的。
 
-JeeSite 是轻量级的，简单易学，本框架以Spring Framework为核心、Spring MVC作为模型视图控制器、Spring Data JPA + Hibernate作为数据库操作层，此组合是Java界业内最经典、最优的搭配组合。前端界面风格采用了结构简单、性能优良、页面精致的Twitter Bootstrap作为前端展示框架。
+openEAP 是轻量级的，简单易学，本框架以Spring Framework为核心、Spring MVC作为模型视图控制器、Spring Data JPA + Hibernate作为数据库操作层，此组合是Java界业内最经典、最优的搭配组合。前端界面风格采用了结构简单、性能优良、页面精致的Twitter Bootstrap作为前端展示框架。
 
-JeeSite 已内置一系列企业信息管理系统的基础功能，目前包括两大模块，系统管理（SYS）模块和内容管理（CMS）模块。 **系统管理模块** ，包括企业组织架构（用户管理、部门管理、区域管理）、菜单管理、角色权限管理、字典管理等功能； **内容管理模块** ，包括内容管理（文章、链接），栏目管理、站点管理、公共留言、文件管理、前端网站展示等功能。
+openEAP 已内置一系列企业信息管理系统的基础功能，目前包括两大模块，系统管理（SYS）模块和内容管理（CMS）模块。 **系统管理模块** ，包括企业组织架构（用户管理、部门管理、区域管理）、菜单管理、角色权限管理、字典管理等功能； **内容管理模块** ，包括内容管理（文章、链接），栏目管理、站点管理、公共留言、文件管理、前端网站展示等功能。
 
-JeeSite 提供了常用工具进行封装，包括日志工具、缓存工具、服务器端验证、数据字典、当前组织机构数据（用户、区域、部门）以及其它常用小工具等。另外还提供一个基于本基础框架的 **代码生成器** ，为你生成基本模块代码，如果你使用了JeeSite基础框架，就可以很快速开发出优秀的信息管理系统。
+openEAP 提供了常用工具进行封装，包括日志工具、缓存工具、服务器端验证、数据字典、当前组织机构数据（用户、区域、部门）以及其它常用小工具等。另外还提供一个基于本基础框架的 **代码生成器** ，为你生成基本模块代码，如果你使用了JeeSite基础框架，就可以很快速开发出优秀的信息管理系统。
 
 ##为何选择
 
@@ -74,14 +74,14 @@ JeeSite 提供了常用工具进行封装，包括日志工具、缓存工具、
 
 ##更多文档
 
-* [JeeSite介绍演示.docx](https://github.com/thinkgem/jeesite/raw/master/doc/JeeSite About.docx)
-* [JeeSite开发手册.docx](https://github.com/thinkgem/jeesite/raw/master/doc/JeeSite Developer.docx)
+* [JeeSite介绍演示.docx]
+* [JeeSite开发手册.docx]
 
 ## 交流、反馈、参与贡献？ 
 
-* QQ Group：127515876
-* E-mail：thinkgem@163.com
-* Github：http://thinkgem.github.com/jeesite
+* QQ：28680360
+* E-mail：luochengwei@gmail.com
+* Github：http://www.openeap.com
 
 如果你想参与进来共同完善它或有更好的建议，请联系我吧(^_^)。
 
