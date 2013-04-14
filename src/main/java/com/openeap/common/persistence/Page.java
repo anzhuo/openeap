@@ -18,7 +18,7 @@ import com.openeap.common.utils.CookieUtils;
 
 /**
  * 分页类
- * @author ThinkGem
+ * @author lcw
  * @version 2013-3-15
  * @param <T>
  */

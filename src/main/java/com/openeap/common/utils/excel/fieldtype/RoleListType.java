@@ -14,7 +14,7 @@ import com.openeap.modules.sys.service.SystemService;
 
 /**
  * 字段类型转换
- * @author ThinkGem
+ * @author lcw
  * @version 2013-03-10
  */
 @Service

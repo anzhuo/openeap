@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 /**
  * 字符串工具类, 继承org.apache.commons.lang3.StringUtils类
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {

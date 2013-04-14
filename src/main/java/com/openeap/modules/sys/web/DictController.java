@@ -22,7 +22,7 @@ import com.openeap.modules.sys.service.DictService;
 
 /**
  * 字典Controller
- * @author ThinkGem
+ * @author lcw
  * @version 2013-3-23
  */
 @Controller

@@ -20,7 +20,7 @@ import freemarker.template.Template;
 
 /**
  * 代码生成器
- * @author ThinkGem
+ * @author lcw
  * @version 2013-03-15
  */
 public class Generate {
@@ -40,7 +40,7 @@ public class Generate {
 		String moduleName = "factory";			// 模块名，例：sys
 		String subModuleName = "";				// 子模块名（可选） 
 		String className = "product";			// 类名，例：user
-		String classAuthor = "ThinkGem";		// 类作者，例：ThinkGem
+		String classAuthor = "lcw";		// 类作者，例：lcw
 		String functionName = "产品";			// 功能名，例：用户
 
 		// 是否启用生成工具

@@ -31,7 +31,7 @@ import com.openeap.modules.cms.entity.Category;
 
 /**
  * 角色Entity
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Entity

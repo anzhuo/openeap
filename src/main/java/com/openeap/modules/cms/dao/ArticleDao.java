@@ -13,7 +13,7 @@ import com.openeap.modules.cms.entity.Article;
 
 /**
  * 文章DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface ArticleDao extends ArticleDaoCustom, CrudRepository<Article, Long> {
@@ -31,7 +31,7 @@ public interface ArticleDao extends ArticleDaoCustom, CrudRepository<Article, Lo
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface ArticleDaoCustom extends BaseDao<Article> {
 
@@ -39,7 +39,7 @@ interface ArticleDaoCustom extends BaseDao<Article> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class ArticleDaoImpl extends BaseDaoImpl<Article> implements ArticleDaoCustom {

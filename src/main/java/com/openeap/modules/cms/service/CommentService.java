@@ -17,7 +17,7 @@ import com.openeap.modules.cms.entity.Comment;
 
 /**
  * 评论Service
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service

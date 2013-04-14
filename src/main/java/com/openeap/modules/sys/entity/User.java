@@ -37,7 +37,7 @@ import com.openeap.common.utils.excel.fieldtype.RoleListType;
 
 /**
  * 用户Entity
- * @author ThinkGem
+ * @author lcw
  * @version 2013-3-15
  */
 @Entity

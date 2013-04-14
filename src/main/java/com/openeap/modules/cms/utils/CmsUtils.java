@@ -22,7 +22,7 @@ import com.openeap.modules.cms.service.SiteService;
 
 /**
  * 内容管理工具类
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service

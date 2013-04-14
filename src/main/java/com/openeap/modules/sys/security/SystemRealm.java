@@ -30,7 +30,7 @@ import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 系统安全认证实现类
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public class SystemRealm extends AuthorizingRealm {

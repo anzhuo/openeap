@@ -15,7 +15,7 @@ import org.hibernate.search.FullTextSession;
 
 /**
  * DAO支持接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  * @param <T>
  */

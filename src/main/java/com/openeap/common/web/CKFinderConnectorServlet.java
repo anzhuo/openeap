@@ -13,7 +13,7 @@ import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * CKFinderConnectorServlet
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public class CKFinderConnectorServlet extends ConnectorServlet {

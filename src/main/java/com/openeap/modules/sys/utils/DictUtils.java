@@ -16,7 +16,7 @@ import com.openeap.modules.sys.entity.Dict;
 
 /**
  * 字典工具类
- * @author ThinkGem
+ * @author lcw
  * @version 2013-03-15
  */
 @Service

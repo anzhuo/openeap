@@ -35,7 +35,7 @@ import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 文章Service
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service

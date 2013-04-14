@@ -17,7 +17,7 @@ import com.openeap.modules.cms.entity.Guestbook;
 
 /**
  * 留言Service
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service

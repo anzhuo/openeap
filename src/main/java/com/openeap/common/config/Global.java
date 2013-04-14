@@ -4,7 +4,7 @@ import com.openeap.common.utils.PropertiesLoader;
 
 /**
  * 全局配置类
- * @author ThinkGem
+ * @author lcw
  * @version 2013-03-23
  */
 public class Global {

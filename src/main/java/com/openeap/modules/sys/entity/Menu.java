@@ -32,7 +32,7 @@ import com.openeap.common.persistence.BaseEntity;
 
 /**
  * 菜单Entity
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Entity

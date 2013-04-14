@@ -13,7 +13,7 @@ import com.openeap.modules.cms.entity.Link;
 
 /**
  * 链接DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface LinkDao extends LinkDaoCustom, CrudRepository<Link, Long> {
@@ -28,7 +28,7 @@ public interface LinkDao extends LinkDaoCustom, CrudRepository<Link, Long> {
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface LinkDaoCustom extends BaseDao<Link> {
 
@@ -36,7 +36,7 @@ interface LinkDaoCustom extends BaseDao<Link> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class LinkDaoImpl extends BaseDaoImpl<Link> implements LinkDaoCustom {

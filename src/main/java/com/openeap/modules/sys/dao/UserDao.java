@@ -14,7 +14,7 @@ import com.openeap.modules.sys.entity.User;
 
 /**
  * 用户DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface UserDao extends UserDaoCustom, CrudRepository<User, Long> {
@@ -38,7 +38,7 @@ public interface UserDao extends UserDaoCustom, CrudRepository<User, Long> {
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface UserDaoCustom extends BaseDao<User> {
 
@@ -46,7 +46,7 @@ interface UserDaoCustom extends BaseDao<User> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class UserDaoImpl extends BaseDaoImpl<User> implements UserDaoCustom {

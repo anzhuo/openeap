@@ -16,7 +16,7 @@ import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 站点Entity
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Entity

@@ -11,7 +11,7 @@ import com.openeap.modules.cms.entity.Site;
 
 /**
  * 站点DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface SiteDao extends SiteDaoCustom, CrudRepository<Site, Long> {
@@ -23,7 +23,7 @@ public interface SiteDao extends SiteDaoCustom, CrudRepository<Site, Long> {
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface SiteDaoCustom extends BaseDao<Site> {
 
@@ -31,7 +31,7 @@ interface SiteDaoCustom extends BaseDao<Site> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class SiteDaoImpl extends BaseDaoImpl<Site> implements SiteDaoCustom {

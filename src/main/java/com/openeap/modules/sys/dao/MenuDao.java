@@ -15,7 +15,7 @@ import com.openeap.modules.sys.entity.User;
 
 /**
  * 菜单DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface MenuDao extends MenuDaoCustom, CrudRepository<Menu, Long> {
@@ -38,7 +38,7 @@ public interface MenuDao extends MenuDaoCustom, CrudRepository<Menu, Long> {
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface MenuDaoCustom extends BaseDao<Menu> {
 
@@ -46,7 +46,7 @@ interface MenuDaoCustom extends BaseDao<Menu> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class MenuDaoImpl extends BaseDaoImpl<Menu> implements MenuDaoCustom {

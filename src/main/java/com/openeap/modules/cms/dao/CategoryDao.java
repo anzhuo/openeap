@@ -18,7 +18,7 @@ import com.openeap.modules.sys.entity.User;
 
 /**
  * 栏目DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface CategoryDao extends CategoryDaoCustom, CrudRepository<Category, Long> {
@@ -54,7 +54,7 @@ public interface CategoryDao extends CategoryDaoCustom, CrudRepository<Category,
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface CategoryDaoCustom extends BaseDao<Category> {
 
@@ -62,7 +62,7 @@ interface CategoryDaoCustom extends BaseDao<Category> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class CategoryDaoImpl extends BaseDaoImpl<Category> implements CategoryDaoCustom {

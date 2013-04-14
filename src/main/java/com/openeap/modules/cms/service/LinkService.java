@@ -27,7 +27,7 @@ import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 链接Service
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service

@@ -18,7 +18,7 @@ import com.openeap.modules.cms.utils.CmsUtils;
 
 /**
  * 站点Service
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service

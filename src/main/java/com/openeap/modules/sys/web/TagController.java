@@ -12,7 +12,7 @@ import com.openeap.common.web.BaseController;
 
 /**
  * 标签Controller
- * @author ThinkGem
+ * @author lcw
  * @version 2013-3-23
  */
 @Controller

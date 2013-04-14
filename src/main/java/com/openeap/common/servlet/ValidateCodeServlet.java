@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 生成随机验证码
- * @author ThinkGem
+ * @author lcw
  * @version 2013-3-15
  */
 @SuppressWarnings("serial")

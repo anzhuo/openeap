@@ -12,7 +12,7 @@ import com.openeap.modules.cms.service.CategoryService;
 
 /**
  * 内容管理Controller
- * @author ThinkGem
+ * @author lcw
  * @version 2013-3-23
  */
 @Controller

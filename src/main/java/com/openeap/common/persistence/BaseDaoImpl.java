@@ -47,7 +47,7 @@ import com.openeap.modules.cms.entity.Article;
 
 /**
  * DAO支持类实现
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  * @param <T>
  */

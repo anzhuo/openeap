@@ -22,7 +22,7 @@ import com.openeap.modules.sys.entity.User;
 
 /**
  * 链接Entity
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Entity

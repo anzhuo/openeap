@@ -13,7 +13,7 @@ import com.openeap.modules.sys.entity.Office;
 
 /**
  * 部门DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface OfficeDao extends OfficeDaoCustom, CrudRepository<Office, Long> {
@@ -33,7 +33,7 @@ public interface OfficeDao extends OfficeDaoCustom, CrudRepository<Office, Long>
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface OfficeDaoCustom extends BaseDao<Office> {
 
@@ -41,7 +41,7 @@ interface OfficeDaoCustom extends BaseDao<Office> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class OfficeDaoImpl extends BaseDaoImpl<Office> implements OfficeDaoCustom {

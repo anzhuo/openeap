@@ -6,7 +6,7 @@ import javax.persistence.MappedSuperclass;
 
 /**
  * Entity支持类
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @MappedSuperclass

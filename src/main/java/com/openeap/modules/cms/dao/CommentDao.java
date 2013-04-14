@@ -11,7 +11,7 @@ import com.openeap.modules.cms.entity.Comment;
 
 /**
  * 评论DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface CommentDao extends CommentDaoCustom, CrudRepository<Comment, Long> {
@@ -24,7 +24,7 @@ public interface CommentDao extends CommentDaoCustom, CrudRepository<Comment, Lo
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface CommentDaoCustom extends BaseDao<Comment> {
 
@@ -32,7 +32,7 @@ interface CommentDaoCustom extends BaseDao<Comment> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class CommentDaoImpl extends BaseDaoImpl<Comment> implements CommentDaoCustom {

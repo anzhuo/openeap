@@ -35,7 +35,7 @@ import com.openeap.modules.cms.utils.CmsUtils;
 
 /**
  * 网站Controller
- * @author ThinkGem
+ * @author lcw
  * @version 2013-3-15
  */
 @Controller

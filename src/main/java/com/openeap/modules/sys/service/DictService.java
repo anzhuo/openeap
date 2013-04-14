@@ -20,7 +20,7 @@ import com.openeap.modules.sys.entity.Dict;
 
 /**
  * 字典Service
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service

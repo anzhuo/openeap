@@ -13,7 +13,7 @@ import com.openeap.modules.sys.entity.Area;
 
 /**
  * 区域DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface AreaDao extends AreaDaoCustom, CrudRepository<Area, Long> {
@@ -34,7 +34,7 @@ public interface AreaDao extends AreaDaoCustom, CrudRepository<Area, Long> {
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface AreaDaoCustom extends BaseDao<Area> {
 
@@ -42,7 +42,7 @@ interface AreaDaoCustom extends BaseDao<Area> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class AreaDaoImpl extends BaseDaoImpl<Area> implements AreaDaoCustom {

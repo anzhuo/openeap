@@ -21,7 +21,7 @@ import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 站点Controller
- * @author ThinkGem
+ * @author lcw
  * @version 2013-3-23
  */
 @Controller

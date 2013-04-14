@@ -40,7 +40,7 @@ import com.openeap.modules.sys.utils.DictUtils;
 
 /**
  * 导出Excel文件（导出“XLSX”格式，支持大数据量导出）
- * @author ThinkGem
+ * @author lcw
  * @version 2013-03-10
  */
 public class ExportExcel {

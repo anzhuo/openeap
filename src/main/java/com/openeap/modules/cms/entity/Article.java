@@ -39,7 +39,7 @@ import com.openeap.modules.sys.entity.User;
 
 /**
  * 文章Entity
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Entity

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 文件操作工具类
  * 实现文件的创建、删除、复制、压缩、解压以及目录的创建、删除、复制、压缩解压等功能
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public class FileUtils {

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Cache工具类
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service

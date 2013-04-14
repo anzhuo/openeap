@@ -13,7 +13,7 @@ import com.openeap.modules.sys.security.SystemRealm.Principal;
 
 /**
  * CKFinder配置
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public class CKFinderConfig extends Configuration {

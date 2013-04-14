@@ -13,7 +13,7 @@ import com.openeap.modules.sys.entity.Dict;
 
 /**
  * 字典DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface DictDao extends DictDaoCustom, CrudRepository<Dict, Long> {
@@ -38,7 +38,7 @@ public interface DictDao extends DictDaoCustom, CrudRepository<Dict, Long> {
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface DictDaoCustom extends BaseDao<Dict> {
 
@@ -46,7 +46,7 @@ interface DictDaoCustom extends BaseDao<Dict> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class DictDaoImpl extends BaseDaoImpl<Dict> implements DictDaoCustom {

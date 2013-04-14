@@ -11,7 +11,7 @@ import com.openeap.modules.cms.entity.Guestbook;
 
 /**
  * 留言DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface GuestbookDao extends GuestbookDaoCustom, CrudRepository<Guestbook, Long> {
@@ -24,7 +24,7 @@ public interface GuestbookDao extends GuestbookDaoCustom, CrudRepository<Guestbo
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface GuestbookDaoCustom extends BaseDao<Guestbook> {
 
@@ -32,7 +32,7 @@ interface GuestbookDaoCustom extends BaseDao<Guestbook> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class GuestbookDaoImpl extends BaseDaoImpl<Guestbook> implements GuestbookDaoCustom {

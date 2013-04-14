@@ -14,7 +14,7 @@ import com.openeap.modules.sys.entity.User;
 
 /**
  * 角色DAO接口
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 public interface RoleDao extends RoleDaoCustom, CrudRepository<Role, Long> {
@@ -37,7 +37,7 @@ public interface RoleDao extends RoleDaoCustom, CrudRepository<Role, Long> {
 
 /**
  * DAO自定义接口
- * @author ThinkGem
+ * @author lcw
  */
 interface RoleDaoCustom extends BaseDao<Role> {
 	
@@ -47,7 +47,7 @@ interface RoleDaoCustom extends BaseDao<Role> {
 
 /**
  * DAO自定义接口实现
- * @author ThinkGem
+ * @author lcw
  */
 @Repository
 class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDaoCustom {

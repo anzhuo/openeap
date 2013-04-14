@@ -23,7 +23,7 @@ import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 栏目Service
- * @author ThinkGem
+ * @author lcw
  * @version 2013-01-15
  */
 @Service
