@@ -15,10 +15,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
@@ -43,7 +43,6 @@ import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import com.openeap.common.utils.Reflections;
 import com.openeap.common.utils.StringUtils;
-import com.openeap.modules.cms.entity.Article;
 
 /**
  * DAO支持类实现
@@ -388,7 +387,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 	 */
 	public void createIndex(){
 		try {
-			getFullTextSession().createIndexer(Article.class).startAndWait();
+			getFullTextSession().createIndexer(entityClass).startAndWait();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
