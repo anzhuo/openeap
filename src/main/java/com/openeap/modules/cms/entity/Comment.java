@@ -8,11 +8,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.validator.constraints.Length;
@@ -23,16 +26,17 @@ import com.openeap.modules.sys.entity.User;
 /**
  * 评论Entity
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 @Entity
 @Table(name = "cms_comment")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Comment extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;		// 编号
-	private String module; 	// 内容模型（article：文章；picture：图片；download：下载）
+	private Category category;// 分类编号
 	private Long contentId;	// 归属分类内容的编号（Article.id、Photo.id、Download.id）
 	private String title;	// 归属分类内容的标题（Article.title、Photo.title、Download.title）
 	private String content; // 评论内容
@@ -41,20 +45,30 @@ public class Comment extends BaseEntity {
 	private Date createDate;// 评论时间
 	private User auditUser; // 审核人
 	private Date auditDate;	// 审核时间
-	private String status;	// 删除标记（0：发布；1：作废；2：审核；）
+	private String delFlag;	// 删除标记删除标记（0：正常；1：删除；2：审核）
 
 	public Comment() {
-		this.createDate = new Date();
-		this.status = STATUS_RELEASE;
+		super();
+		this.delFlag = DEL_FLAG_AUDIT;
 	}
 	
 	public Comment(Long id){
 		this();
 		this.id = id;
 	}
+	
+	public Comment(Category category){
+		this();
+		this.category = category;
+	}
+	
+	@PrePersist
+	public void prePersist(){
+		this.createDate = new Date();
+	}
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cms_comment")
 //	@SequenceGenerator(name = "seq_cms_comment", sequenceName = "seq_cms_comment")
 	public Long getId() {
@@ -65,13 +79,16 @@ public class Comment extends BaseEntity {
 		this.id = id;
 	}
 
-	@Length(min=1, max=20)
-	public String getModule() {
-		return module;
+	@ManyToOne
+	@JoinColumn(name="category_id")
+	@NotFound(action = NotFoundAction.IGNORE)
+	@NotNull
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setModule(String module) {
-		this.module = module;
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 	@NotNull
@@ -113,7 +130,6 @@ public class Comment extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name="audit_user_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	public User getAuditUser() {
 		return auditUser;
 	}
@@ -148,12 +164,12 @@ public class Comment extends BaseEntity {
 	}
 
 	@Length(min=1, max=1)
-	public String getStatus() {
-		return status;
+	public String getDelFlag() {
+		return delFlag;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setDelFlag(String delFlag) {
+		this.delFlag = delFlag;
 	}
 
 }

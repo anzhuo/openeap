@@ -12,9 +12,9 @@ import com.openeap.common.persistence.BaseDaoImpl;
 import com.openeap.modules.sys.entity.Office;
 
 /**
- * 部门DAO接口
+ * 机构DAO接口
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 public interface OfficeDao extends OfficeDaoCustom, CrudRepository<Office, Long> {
 
@@ -24,11 +24,11 @@ public interface OfficeDao extends OfficeDaoCustom, CrudRepository<Office, Long>
 	
 	public List<Office> findByParentIdsLike(String parentIds);
 
-	@Query("from Office where delFlag='" + Office.DEL_FLAG_NORMAL + "' order by code")
-	public List<Office> findAllList();
-	
-	@Query("from Office where (id=?1 or parent.id=?1 or parentIds like ?2) and delFlag='" + Office.DEL_FLAG_NORMAL + "' order by code")
-	public List<Office> findAllChild(Long parentId, String likeParentIds);
+//	@Query("from Office where delFlag='" + Office.DEL_FLAG_NORMAL + "' order by code")
+//	public List<Office> findAllList();
+//	
+//	@Query("from Office where (id=?1 or parent.id=?1 or parentIds like ?2) and delFlag='" + Office.DEL_FLAG_NORMAL + "' order by code")
+//	public List<Office> findAllChild(Long parentId, String likeParentIds);
 }
 
 /**

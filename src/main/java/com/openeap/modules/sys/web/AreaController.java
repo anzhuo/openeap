@@ -19,20 +19,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.openeap.common.config.Global;
-import com.openeap.common.mapper.JsonMapper;
 import com.openeap.common.web.BaseController;
 import com.openeap.modules.sys.entity.Area;
-import com.openeap.modules.sys.entity.User;
 import com.openeap.modules.sys.service.AreaService;
 import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 区域Controller
  * @author lcw
- * @version 2013-3-23
+ * @version 2013-5-15
  */
 @Controller
-@RequestMapping(value = Global.ADMIN_PATH+"/sys/area")
+@RequestMapping(value = "${adminPath}/sys/area")
 public class AreaController extends BaseController {
 
 	@Autowired
@@ -50,12 +48,12 @@ public class AreaController extends BaseController {
 	@RequiresPermissions("sys:area:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(Area area, Model model) {
-		User user = UserUtils.getUser();
-		if(user.isAdmin()){
+//		User user = UserUtils.getUser();
+//		if(user.isAdmin()){
 			area.setId(1L);
-		}else{
-			area.setId(user.getArea().getId());
-		}
+//		}else{
+//			area.setId(user.getArea().getId());
+//		}
 		model.addAttribute("area", area);
 		List<Area> list = Lists.newArrayList();
 		List<Area> sourcelist = areaService.findAll();
@@ -68,7 +66,7 @@ public class AreaController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(Area area, Model model) {
 		if (area.getParent()==null||area.getParent().getId()==null){
-			area.setParent(UserUtils.getUser().getArea());
+			area.setParent(UserUtils.getUser().getOffice().getArea());
 		}
 		area.setParent(areaService.get(area.getParent().getId()));
 		model.addAttribute("area", area);
@@ -83,7 +81,7 @@ public class AreaController extends BaseController {
 		}
 		areaService.save(area);
 		addMessage(redirectAttributes, "保存区域'" + area.getName() + "'成功");
-		return "redirect:"+Global.ADMIN_PATH+"/sys/area/";
+		return "redirect:"+Global.getAdminPath()+"/sys/area/";
 	}
 	
 	@RequiresPermissions("sys:area:edit")
@@ -95,27 +93,28 @@ public class AreaController extends BaseController {
 			areaService.delete(id);
 			addMessage(redirectAttributes, "删除区域成功");
 		}
-		return "redirect:"+Global.ADMIN_PATH+"/sys/area/";
+		return "redirect:"+Global.getAdminPath()+"/sys/area/";
 	}
 
 	@RequiresUser
 	@ResponseBody
 	@RequestMapping(value = "treeData")
-	public String treeData(@RequestParam(required=false) Long extId, HttpServletResponse response) {
+	public List<Map<String, Object>> treeData(@RequestParam(required=false) Long extId, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		User user = UserUtils.getUser();
+//		User user = UserUtils.getUser();
 		List<Area> list = areaService.findAll();
 		for (int i=0; i<list.size(); i++){
 			Area e = list.get(i);
 			if (extId == null || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
 				Map<String, Object> map = Maps.newHashMap();
 				map.put("id", e.getId());
-				map.put("pId", !user.isAdmin()&&e.getId().equals(user.getArea().getId())?0:e.getParent()!=null?e.getParent().getId():0);
+//				map.put("pId", !user.isAdmin()&&e.getId().equals(user.getArea().getId())?0:e.getParent()!=null?e.getParent().getId():0);
+				map.put("pId", e.getParent()!=null?e.getParent().getId():0);
 				map.put("name", e.getName());
 				mapList.add(map);
 			}
 		}
-		return JsonMapper.getInstance().toJson(mapList);
+		return mapList;
 	}
 }

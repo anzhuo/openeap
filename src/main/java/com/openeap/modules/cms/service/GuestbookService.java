@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +22,6 @@ import com.openeap.modules.cms.entity.Guestbook;
 @Transactional(readOnly = true)
 public class GuestbookService extends BaseService {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(GuestbookService.class);
-	
 	@Autowired
 	private GuestbookDao guestbookDao;
 	
@@ -42,7 +37,7 @@ public class GuestbookService extends BaseService {
 		if (StringUtils.isNotEmpty(guestbook.getContent())){
 			dc.add(Restrictions.like("content", "%"+guestbook.getContent()+"%"));
 		}
-		dc.add(Restrictions.eq("status", guestbook.getStatus()));
+		dc.add(Restrictions.eq(Guestbook.DEL_FLAG, guestbook.getDelFlag()));
 		dc.addOrder(Order.desc("id"));
 		return guestbookDao.find(page, dc);
 	}
@@ -54,7 +49,7 @@ public class GuestbookService extends BaseService {
 	
 	@Transactional(readOnly = false)
 	public void delete(Long id, Boolean isRe) {
-		guestbookDao.updateStatus(id, isRe!=null&&isRe?Guestbook.STATUS_AUDIT:Guestbook.STATUS_DELETE);
+		guestbookDao.updateDelFlag(id, isRe!=null&&isRe?Guestbook.DEL_FLAG_AUDIT:Guestbook.DEL_FLAG_DELETE);
 	}
 	
 }

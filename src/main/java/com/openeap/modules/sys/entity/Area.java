@@ -18,38 +18,40 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import com.google.common.collect.Lists;
-import com.openeap.common.persistence.BaseEntity;
+import com.openeap.common.persistence.DataEntity;
 
 /**
  * 区域Entity
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 @Entity
 @Table(name = "sys_area")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Area extends BaseEntity {
+public class Area extends DataEntity {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;		// 编号
 	private Area parent;	// 父级编号
 	private String parentIds; // 所有父级编号
-	private String name; 	// 区域名称
 	private String code; 	// 区域编码
-	private String remarks; // 备注
-	private String delFlag; // 删除标记（0：正常；1：删除）
+	private String name; 	// 区域名称
+	private String type; 	// 区域类型（1：国家；2：省份、直辖市；3：地市；4：区县）
 	
 	private List<Office> officeList = Lists.newArrayList(); // 部门列表
 	private List<Area> childList = Lists.newArrayList();	// 拥有子区域列表
 
 	public Area(){
-		this.delFlag = DEL_FLAG_NORMAL;
+		super();
 	}
 	
 	public Area(Long id){
@@ -58,7 +60,7 @@ public class Area extends BaseEntity {
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_sys_area")
 //	@SequenceGenerator(name = "seq_sys_area", sequenceName = "seq_sys_area")
 	public Long getId() {
@@ -72,7 +74,6 @@ public class Area extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="parent_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@NotNull
 	public Area getParent() {
 		return parent;
@@ -100,6 +101,15 @@ public class Area extends BaseEntity {
 		this.name = name;
 	}
 
+	@Length(min=1, max=1)
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	@Length(min=0, max=100)
 	public String getCode() {
 		return code;
@@ -107,24 +117,6 @@ public class Area extends BaseEntity {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	@Length(min=0, max=255)
-	public String getRemarks() {
-		return remarks;
-	}
-
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
-	
-	@Length(min=1, max=1)
-	public String getDelFlag() {
-		return delFlag;
-	}
-
-	public void setDelFlag(String delFlag) {
-		this.delFlag = delFlag;
 	}
 
 	@OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE},fetch=FetchType.LAZY,mappedBy="area")

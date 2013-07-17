@@ -1,8 +1,3 @@
-/*!
- * Copyright &copy; 2012-2013 <a href="https://www.openeap.com">openEAP</a> All rights reserved.
- *
- */
-
 // 添加收藏
 function addFavorite(sURL, sTitle){
 	if(!sTitle){sTitle = document.title;}

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -16,8 +17,6 @@ import org.apache.shiro.SecurityUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.openeap.common.persistence.Page;
 import com.openeap.common.service.BaseService;
+import com.openeap.common.utils.CacheUtils;
 import com.openeap.common.utils.StringUtils;
 import com.openeap.modules.cms.dao.ArticleDao;
 import com.openeap.modules.cms.dao.CategoryDao;
@@ -36,15 +36,12 @@ import com.openeap.modules.sys.utils.UserUtils;
 /**
  * 文章Service
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 @Service
 @Transactional(readOnly = true)
 public class ArticleService extends BaseService {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(ArticleService.class);
-	
 	@Autowired
 	private ArticleDao articleDao;
 	@Autowired
@@ -54,7 +51,14 @@ public class ArticleService extends BaseService {
 		return articleDao.findOne(id);
 	}
 	
-	public Page<Article> find(Page<Article> page, Article article) {
+	public Page<Article> find(Page<Article> page, Article article, boolean isDataScopeFilter) {
+		// 更新过期的权重，间隔为“6”个小时
+		Date updateExpiredWeightDate =  (Date)CacheUtils.get("updateExpiredWeightDateByArticle");
+		if (updateExpiredWeightDate == null || (updateExpiredWeightDate != null 
+				&& updateExpiredWeightDate.getTime() < new Date().getTime())){
+			articleDao.updateExpiredWeight();
+			CacheUtils.put("updateExpiredWeightDateByArticle", DateUtils.addHours(new Date(), 6));
+		}
 		DetachedCriteria dc = articleDao.createDetachedCriteria();
 		dc.createAlias("category", "category");
 		dc.createAlias("category.site", "category.site");
@@ -63,7 +67,6 @@ public class ArticleService extends BaseService {
 			if (category!=null){
 				dc.add(Restrictions.or(
 						Restrictions.eq("category.id", category.getId()),
-						Restrictions.eq("category.parent.id", category.getId()),
 						Restrictions.like("category.parentIds", "%,"+category.getId()+",%")));
 				dc.add(Restrictions.eq("category.site.id", category.getSite().getId()));
 				article.setCategory(category);
@@ -79,15 +82,21 @@ public class ArticleService extends BaseService {
 		if (StringUtils.isNotEmpty(article.getPosid())){
 			dc.add(Restrictions.like("posid", "%,"+article.getPosid()+",%"));
 		}
-		if (StringUtils.isNotEmpty(article.getThumb())&&"1".equals(article.getThumb())){
-			dc.add(Restrictions.and(Restrictions.isNotNull("thumb"),Restrictions.ne("thumb","")));
+		if (StringUtils.isNotEmpty(article.getImage())&&Article.YES.equals(article.getImage())){
+			dc.add(Restrictions.and(Restrictions.isNotNull("image"),Restrictions.ne("image","")));
 		}
-		if (article.getUser()!=null && article.getUser().getId()>0){
-			dc.add(Restrictions.eq("user.id", article.getUser().getId()));
+		if (article.getCreateBy()!=null && article.getCreateBy().getId()>0){
+			dc.add(Restrictions.eq("createBy.id", article.getCreateBy().getId()));
 		}
-		dc.add(Restrictions.eq("status", article.getStatus()));
-		dc.addOrder(Order.desc("weight"));
-		dc.addOrder(Order.desc("updateDate"));
+		if (isDataScopeFilter){
+			dc.createAlias("category.office", "categoryOffice").createAlias("createBy", "createBy");
+			dc.add(dataScopeFilter(UserUtils.getUser(), "categoryOffice", "createBy"));
+		}
+		dc.add(Restrictions.eq(Article.DEL_FLAG, article.getDelFlag()));
+		if (StringUtils.isBlank(page.getOrderBy())){
+			dc.addOrder(Order.desc("weight"));
+			dc.addOrder(Order.desc("updateDate"));
+		}
 		return articleDao.find(page, dc);
 	}
 
@@ -99,22 +108,25 @@ public class ArticleService extends BaseService {
 		}
 		// 如果没有审核权限，则将当前内容改为待审核状态
 		if (!SecurityUtils.getSubject().isPermitted("cms:article:audit")){
-			article.setStatus(Article.STATUS_AUDIT);
+			article.setDelFlag(Article.DEL_FLAG_AUDIT);
 		}
-		if (article.getId()==null){
-			article.setUser(UserUtils.getUser());
+		// 如果栏目不需要审核，则将该内容设为发布状态
+		if (article.getCategory()!=null&&article.getCategory().getId()!=null){
+			Category category = categoryDao.findOne(article.getCategory().getId());
+			if (!Article.YES.equals(category.getIsAudit())){
+				article.setDelFlag(Article.DEL_FLAG_NORMAL);
+			}
 		}
-		article.setUpdateDate(new Date());
 		articleDao.clear();
 		articleDao.save(article);
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(Long id, Boolean isRe) {
-//		articleDao.updateStatus(id, isRe!=null&&isRe?Article.STATUS_RELEASE:Article.STATUS_DELETE);
+//		articleDao.updateDelFlag(id, isRe!=null&&isRe?Article.DEL_FLAG_NORMAL:Article.DEL_FLAG_DELETE);
 		// 使用下面方法，以便更新索引。
 		Article article = articleDao.findOne(id);
-		article.setStatus(isRe!=null&&isRe?Article.STATUS_RELEASE:Article.STATUS_DELETE);
+		article.setDelFlag(isRe!=null&&isRe?Article.DEL_FLAG_NORMAL:Article.DEL_FLAG_DELETE);
 		articleDao.save(article);
 	}
 	
@@ -155,16 +167,16 @@ public class ArticleService extends BaseService {
 	public Page<Article> search(Page<Article> page, String q){
 		
 		// 设置查询条件
-		BooleanQuery query = articleDao.getFullTextQuery(q, "title","keywords","desciption","articleData.content");
+		BooleanQuery query = articleDao.getFullTextQuery(q, "title","keywords","description","articleData.content");
 		// 设置过滤条件
 		BooleanQuery queryFilter = articleDao.getFullTextQuery(new BooleanClause(
-				new TermQuery(new Term("status", Article.STATUS_RELEASE)), Occur.MUST));
+				new TermQuery(new Term(Article.DEL_FLAG, Article.DEL_FLAG_NORMAL)), Occur.MUST));
 		// 设置排序
 		Sort sort = new Sort(new SortField("updateDate", SortField.DOC, true));
 		// 全文检索
 		articleDao.search(page, query, queryFilter, sort);
 		// 关键字高亮
-		articleDao.keywordsHighlight(query, page.getList(), "desciption","articleData.content");
+		articleDao.keywordsHighlight(query, page.getList(), "description","articleData.content");
 		
 		return page;
 	}

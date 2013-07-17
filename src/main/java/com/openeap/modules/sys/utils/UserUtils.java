@@ -1,18 +1,18 @@
 package com.openeap.modules.sys.utils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Service;
+import org.apache.shiro.UnavailableSecurityManagerException;
+import org.apache.shiro.subject.Subject;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
-import com.google.common.collect.Lists;
-import com.openeap.modules.cms.dao.CategoryDao;
-import com.openeap.modules.cms.entity.Category;
+import com.google.common.collect.Maps;
+import com.openeap.common.service.BaseService;
+import com.openeap.common.utils.SpringContextHolder;
 import com.openeap.modules.sys.dao.AreaDao;
 import com.openeap.modules.sys.dao.MenuDao;
 import com.openeap.modules.sys.dao.OfficeDao;
@@ -21,29 +21,32 @@ import com.openeap.modules.sys.entity.Area;
 import com.openeap.modules.sys.entity.Menu;
 import com.openeap.modules.sys.entity.Office;
 import com.openeap.modules.sys.entity.User;
-import com.openeap.modules.sys.security.SystemRealm.Principal;
+import com.openeap.modules.sys.security.SystemAuthorizingRealm.Principal;
 
 /**
  * 用户工具类
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-5-29
  */
-@Service
-public class UserUtils implements ApplicationContextAware {
+public class UserUtils extends BaseService {
 	
-	private static UserDao userDao;
-	private static MenuDao menuDao;
-	private static AreaDao areaDao;
-	private static OfficeDao officeDao;
-	private static CategoryDao categoryDao;
+	private static UserDao userDao = SpringContextHolder.getBean(UserDao.class);
+	private static MenuDao menuDao = SpringContextHolder.getBean(MenuDao.class);
+	private static AreaDao areaDao = SpringContextHolder.getBean(AreaDao.class);
+	private static OfficeDao officeDao = SpringContextHolder.getBean(OfficeDao.class);
+
+	public static final String CACHE_USER = "user";
+	public static final String CACHE_MENU_LIST = "menuList";
+	public static final String CACHE_AREA_LIST = "areaList";
+	public static final String CACHE_OFFICE_LIST = "officeList";
 	
 	public static User getUser(){
-		User user = (User)getCache("user");
+		User user = (User)getCache(CACHE_USER);
 		if (user == null){
 			Principal principal = (Principal)SecurityUtils.getSubject().getPrincipal();
 			if (principal!=null){
-				user = userDao.findByLoginName(principal.getLoginName());
-				putCache("user", user);
+				user = userDao.findOne(principal.getId());
+				putCache(CACHE_USER, user);
 			}
 		}
 		if (user == null){
@@ -55,14 +58,14 @@ public class UserUtils implements ApplicationContextAware {
 	
 	public static User getUser(boolean isRefresh){
 		if (isRefresh){
-			removeCache("user");
+			removeCache(CACHE_USER);
 		}
 		return getUser();
 	}
 
 	public static List<Menu> getMenuList(){
 		@SuppressWarnings("unchecked")
-		List<Menu> menuList = (List<Menu>)getCache("menuList");
+		List<Menu> menuList = (List<Menu>)getCache(CACHE_MENU_LIST);
 		if (menuList == null){
 			User user = getUser();
 			if (user.isAdmin()){
@@ -70,82 +73,55 @@ public class UserUtils implements ApplicationContextAware {
 			}else{
 				menuList = menuDao.findByUserId(user.getId());
 			}
-			putCache("menuList", menuList);
+			putCache(CACHE_MENU_LIST, menuList);
 		}
 		return menuList;
 	}
 	
 	public static List<Area> getAreaList(){
 		@SuppressWarnings("unchecked")
-		List<Area> areaList = (List<Area>)getCache("areaList");
+		List<Area> areaList = (List<Area>)getCache(CACHE_AREA_LIST);
 		if (areaList == null){
-			User user = getUser();
-			if (user.isAdmin()){
+//			User user = getUser();
+//			if (user.isAdmin()){
 				areaList = areaDao.findAllList();
-			}else{
-				areaList = areaDao.findAllChild(user.getArea().getId(), "%,"+user.getArea().getId()+",%");
-			}
-			putCache("areaList", areaList);
+//			}else{
+//				areaList = areaDao.findAllChild(user.getArea().getId(), "%,"+user.getArea().getId()+",%");
+//			}
+			putCache(CACHE_AREA_LIST, areaList);
 		}
 		return areaList;
 	}
 	
 	public static List<Office> getOfficeList(){
 		@SuppressWarnings("unchecked")
-		List<Office> officeList = (List<Office>)getCache("officeList");
+		List<Office> officeList = (List<Office>)getCache(CACHE_OFFICE_LIST);
 		if (officeList == null){
 			User user = getUser();
-			if (user.isAdmin()){
-				officeList = officeDao.findAllList();
-			}else{
-				officeList = officeDao.findAllChild(user.getOffice().getId(), "%,"+user.getOffice().getId()+",%");
-			}
-			putCache("officeList", officeList);
+//			if (user.isAdmin()){
+//				officeList = officeDao.findAllList();
+//			}else{
+//				officeList = officeDao.findAllChild(user.getOffice().getId(), "%,"+user.getOffice().getId()+",%");
+//			}
+			DetachedCriteria dc = officeDao.createDetachedCriteria();
+			dc.add(dataScopeFilter(user, dc.getAlias(), ""));
+			dc.add(Restrictions.eq("delFlag", Office.DEL_FLAG_NORMAL));
+			dc.addOrder(Order.asc("code"));
+			officeList = officeDao.find(dc);
+			putCache(CACHE_OFFICE_LIST, officeList);
 		}
 		return officeList;
-	}
-	
-	public static List<Category> getCategoryList(){
-		@SuppressWarnings("unchecked")
-		List<Category> categoryList = (List<Category>)getCache("categoryList");
-		if (categoryList == null){
-			User user = getUser();
-			if (user.isAdmin()){
-				categoryList = categoryDao.findAllList();
-			}else{
-				categoryList = categoryDao.findByUserId(user.getId());
-			}
-			putCache("categoryList", categoryList);
-		}
-		return categoryList;
-	}
-	
-	public static List<Category> getCategoryListByModule(String module){
-		List<Category> list = Lists.newArrayList();
-		if (StringUtils.isNotBlank(module)){
-			for (Category category : getCategoryList()){
-				if (module.equals(category.getModule()) || "".equals(category.getModule())){
-					list.add(category);
-				}
-			}
-		}
-		return list;
-	}
-	
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext){
-		userDao = (UserDao)applicationContext.getBean("userDao");
-		menuDao = (MenuDao)applicationContext.getBean("menuDao");
-		areaDao = (AreaDao)applicationContext.getBean("areaDao");
-		officeDao = (OfficeDao)applicationContext.getBean("officeDao");
-		categoryDao = (CategoryDao)applicationContext.getBean("categoryDao");
 	}
 	
 	// ============== User Cache ==============
 	
 	public static Object getCache(String key) {
+		return getCache(key, null);
+	}
+	
+	public static Object getCache(String key, Object defaultValue) {
 		Object obj = getCacheMap().get(key);
-		return obj==null?null:obj;
+		return obj==null?defaultValue:obj;
 	}
 
 	public static void putCache(String key, Object value) {
@@ -156,8 +132,15 @@ public class UserUtils implements ApplicationContextAware {
 		getCacheMap().remove(key);
 	}
 	
-	private static Map<String, Object> getCacheMap(){
-		Principal principal = (Principal)SecurityUtils.getSubject().getPrincipal();
-		return principal!=null?principal.getCacheMap():new HashMap<String, Object>();
+	public static Map<String, Object> getCacheMap(){
+		Map<String, Object> map = Maps.newHashMap();
+		try{
+			Subject subject = SecurityUtils.getSubject();
+			Principal principal = (Principal)subject.getPrincipal();
+			return principal!=null?principal.getCacheMap():map;
+		}catch (UnavailableSecurityManagerException e) {
+			return map;
+		}
 	}
+	
 }

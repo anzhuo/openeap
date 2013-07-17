@@ -9,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -20,31 +18,32 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import com.google.common.collect.Lists;
-import com.openeap.common.persistence.BaseEntity;
-import com.openeap.modules.sys.entity.Role;
-import com.openeap.modules.sys.entity.User;
+import com.openeap.common.persistence.DataEntity;
+import com.openeap.modules.sys.entity.Office;
 
 /**
  * 栏目Entity
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 @Entity
 @Table(name = "cms_category")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Category extends BaseEntity {
+public class Category extends DataEntity {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;		// 编号
 	private Site site;		// 归属站点
+	private Office office;	// 归属部门
 	private Category parent;// 父级菜单
 	private String parentIds;// 所有父级编号
 	private String module; 	// 栏目模型（article：文章；picture：图片；download：下载；link：链接；special：专题）
@@ -52,26 +51,27 @@ public class Category extends BaseEntity {
 	private String image; 	// 栏目图片
 	private String href; 	// 链接
 	private String target; 	// 目标（ _blank、_self、_parent、_top）
-	private String desciption; 	// 描述，填写有助于搜索引擎优化
+	private String description; 	// 描述，填写有助于搜索引擎优化
 	private String keywords; 	// 关键字，填写有助于搜索引擎优化
 	private Integer sort; 		// 排序（升序）
 	private String inMenu; 		// 是否在导航中显示（1：显示；0：不显示）
 	private String inList; 		// 是否在分类页中显示列表（1：显示；0：不显示）
 	private String showModes; 	// 展现方式（0:有子栏目显示栏目列表，无子栏目显示内容列表;1：首栏目内容列表；2：栏目第一条内容）
 	private String allowComment;// 是否允许评论
-	private User user;		// 创建者
-	private String delFlag; 	// 删除标记（0：正常；1：删除）
+	private String isAudit;	// 是否需要审核
 	
 	private List<Category> childList = Lists.newArrayList(); 	// 拥有子分类列表
-	private List<Role> roleList = Lists.newArrayList(); 		// 拥有角色列表
 
 	public Category(){
+		super();
+		this.module = "article";
 		this.sort = 30;
-		this.inMenu = SHOW;
+		this.inMenu = HIDE;
 		this.inList = SHOW;
 		this.showModes = "0";
-		this.allowComment = YES;
+		this.allowComment = NO;
 		this.delFlag = DEL_FLAG_NORMAL;
+		this.isAudit = NO;
 	}
 
 	public Category(Long id){
@@ -86,7 +86,7 @@ public class Category extends BaseEntity {
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cms_category")
 //	@SequenceGenerator(name = "seq_cms_category", sequenceName = "seq_cms_category")
 	public Long getId() {
@@ -100,7 +100,6 @@ public class Category extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="site_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	public Site getSite() {
 		return site;
 	}
@@ -108,11 +107,21 @@ public class Category extends BaseEntity {
 	public void setSite(Site site) {
 		this.site = site;
 	}
+	
+	@ManyToOne
+	@JoinColumn(name="office_id")
+	@NotFound(action = NotFoundAction.IGNORE)
+	public Office getOffice() {
+		return office;
+	}
+
+	public void setOffice(Office office) {
+		this.office = office;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="parent_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@NotNull
 	public Category getParent() {
 		return parent;
@@ -177,12 +186,12 @@ public class Category extends BaseEntity {
 	}
 
 	@Length(min=0, max=255)
-	public String getDesciption() {
-		return desciption;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDesciption(String desciption) {
-		this.desciption = desciption;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Length(min=0, max=255)
@@ -239,25 +248,13 @@ public class Category extends BaseEntity {
 		this.allowComment = allowComment;
 	}
 
-	@ManyToOne
-	@JoinColumn(name="user_id")
-	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
 	@Length(min=1, max=1)
-	public String getDelFlag() {
-		return delFlag;
+	public String getIsAudit() {
+		return isAudit;
 	}
 
-	public void setDelFlag(String delFlag) {
-		this.delFlag = delFlag;
+	public void setIsAudit(String isAudit) {
+		this.isAudit = isAudit;
 	}
 
 	@OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE},fetch=FetchType.LAZY,mappedBy="parent")
@@ -273,21 +270,6 @@ public class Category extends BaseEntity {
 		this.childList = childList;
 	}
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "sys_role_category", joinColumns = { @JoinColumn(name = "category_id") },
-		inverseJoinColumns = { @JoinColumn(name = "role_id") })
-	@Where(clause="del_flag='"+DEL_FLAG_NORMAL+"'")
-	@OrderBy("id") @Fetch(FetchMode.SUBSELECT)
-	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	public List<Role> getRoleList() {
-		return roleList;
-	}
-	
-	public void setRoleList(List<Role> roleList) {
-		this.roleList = roleList;
-	}
-	
 	@Transient
 	public static void sortList(List<Category> list, List<Category> sourcelist, Long parentId){
 		for (int i=0; i<sourcelist.size(); i++){

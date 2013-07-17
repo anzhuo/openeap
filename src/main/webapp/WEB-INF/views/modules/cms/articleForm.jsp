@@ -11,7 +11,7 @@
 				submitHandler: function(form){
 					if ($("#categoryId").val()==""){
 						$("#categoryName").focus();
-						top.$.jBox.tip('请选择所属栏目','warning');
+						top.$.jBox.tip('请选择归属栏目','warning');
 					}else if (CKEDITOR.instances.content.getData()==""){
 						top.$.jBox.tip('请填写正文','warning');
 					}else{
@@ -22,7 +22,7 @@
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
 					$("#messageBox").text("输入有误，请先更正。");
-					if (element.is(":checkbox")||element.is(":radio")){
+					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
 						error.appendTo(element.parent().parent());
 					} else {
 						error.insertAfter(element);
@@ -30,17 +30,6 @@
 				}
 			});
 		});
-		function viewComment(href){
-			top.$.jBox.open('iframe:'+href,'查看评论',$(top.document).width()-220,$(top.document).height()-120,{
-				buttons:{"关闭":true},
-				loaded:function(h){
-					$(".jbox-content", top.document).css("overflow-y","hidden");
-					$(".nav,.form-actions,[class=btn]", h.find("iframe").contents()).hide();
-					$("body", h.find("iframe").contents()).css("margin","10px");
-				}
-			});
-			return false;
-		}
 	</script>
 </head>
 <body>
@@ -52,10 +41,10 @@
 		<form:hidden path="id"/>
 		<tags:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">所属栏目:</label>
+			<label class="control-label">归属栏目:</label>
 			<div class="controls">
                 <tags:treeselect id="category" name="category.id" value="${article.category.id}" labelName="category.name" labelValue="${article.category.name}"
-					title="栏目" url="/cms/category/treeData" module="article" selectScopeModule="true" notAllowSelectRoot="true" notAllowSelectParent="true"/>
+					title="栏目" url="/cms/category/treeData" module="article" selectScopeModule="true" notAllowSelectRoot="false" notAllowSelectParent="true" cssClass="required"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -79,15 +68,21 @@
 		<div class="control-group">
 			<label class="control-label">权重:</label>
 			<div class="controls">
-				<form:input path="weight" htmlEscape="false" maxlength="200" class="input-mini required digits"/>&nbsp;<span>
-				<input id="weightTop" type="checkbox" onclick="$('#weight').val(this.checked?'999':'0')"><label for="weightTop">置顶</label>
-				</span><span class="help-inline">数值越大排序越靠前。</span>
+				<form:input path="weight" htmlEscape="false" maxlength="200" class="input-mini required digits"/>&nbsp;
+				<span>
+					<input id="weightTop" type="checkbox" onclick="$('#weight').val(this.checked?'999':'0')"><label for="weightTop">置顶</label>
+				</span>
+				&nbsp;过期时间：
+				<input id="weightDate" name="weightDate" type="text" readonly="readonly" maxlength="20" class="input-small Wdate"
+					value="<fmt:formatDate value="${article.weightDate}" pattern="yyyy-MM-dd"/>"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
+				<span class="help-inline">数值越大排序越靠前，过期时间可为空，过期后取消置顶。</span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">摘要:</label>
 			<div class="controls">
-				<form:textarea path="desciption" htmlEscape="false" rows="4" maxlength="200" class="input-xxlarge"/>
+				<form:textarea path="description" htmlEscape="false" rows="4" maxlength="200" class="input-xxlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -104,10 +99,10 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">缩略图:</label>
+			<label class="control-label">文章图片:</label>
 			<div class="controls">
-				<form:hidden path="thumb" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<tags:ckfinder input="thumb" type="thumb" uploadPath="/cms/article" selectMultiple="false"/>
+				<form:hidden path="image" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<tags:ckfinder input="image" type="images" uploadPath="/cms/article" selectMultiple="false"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -148,7 +143,7 @@
 						articleSelectRefresh();
 					});
 					$("#relationButton").click(function(){
-						top.$.jBox.open("iframe:${ctx}/cms/article/selectList?pageSize=8", "添加相关",$(top.document).width()-220,$(top.document).height()-120,{
+						top.$.jBox.open("iframe:${ctx}/cms/article/selectList?pageSize=8", "添加相关",$(top.document).width()-220,$(top.document).height()-180,{
 							buttons:{"确定":true}, loaded:function(h){
 								$(".jbox-content", top.document).css("overflow-y","hidden");
 							}
@@ -172,30 +167,40 @@
 		<div class="control-group">
 			<label class="control-label">发布时间:</label>
 			<div class="controls">
-				<div class="input-append">
-					<script src="${ctxStatic}/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
-					<input id="inputDate" name="inputDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-						value="<fmt:formatDate value="${article.inputDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-						onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				</div>
+				<input id="createDate" name="createDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					value="<fmt:formatDate value="${article.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 			</div>
 		</div>
 		<shiro:hasPermission name="cms:article:audit">
-		<div class="control-group">
-			<label class="control-label">发布状态:</label>
-			<div class="controls">
-				<form:radiobuttons path="status" items="${fns:getDictList('cms_status')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
-				<span class="help-inline"></span>
+			<div class="control-group">
+				<label class="control-label">发布状态:</label>
+				<div class="controls">
+					<form:radiobuttons path="delFlag" items="${fns:getDictList('cms_del_flag')}" itemLabel="label" itemValue="value" htmlEscape="false" class="required"/>
+					<span class="help-inline"></span>
+				</div>
 			</div>
-		</div>
 		</shiro:hasPermission>
 		<c:if test="${not empty article.id}">
-		<div class="control-group">
-			<label class="control-label">查看评论:</label>
-			<div class="controls">
-				<input id="btnComment" class="btn" type="button" value="查看评论" onclick="viewComment('${ctx}/cms/comment/?module=article&contentId=${article.id}&status=0')"/>
+			<div class="control-group">
+				<label class="control-label">查看评论:</label>
+				<div class="controls">
+					<input id="btnComment" class="btn" type="button" value="查看评论" onclick="viewComment('${ctx}/cms/comment/?module=article&contentId=${article.id}&status=0')"/>
+					<script type="text/javascript">
+						function viewComment(href){
+							top.$.jBox.open('iframe:'+href,'查看评论',$(top.document).width()-220,$(top.document).height()-180,{
+								buttons:{"关闭":true},
+								loaded:function(h){
+									$(".jbox-content", top.document).css("overflow-y","hidden");
+									$(".nav,.form-actions,[class=btn]", h.find("iframe").contents()).hide();
+									$("body", h.find("iframe").contents()).css("margin","10px");
+								}
+							});
+							return false;
+						}
+					</script>
+				</div>
 			</div>
-		</div>
 		</c:if>
 		<div class="form-actions">
 			<shiro:hasPermission name="cms:article:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>

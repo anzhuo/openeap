@@ -19,6 +19,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
@@ -26,11 +28,11 @@ import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
-import com.openeap.common.persistence.BaseEntity;
+import com.openeap.common.persistence.DataEntity;
 import com.openeap.common.utils.Collections3;
 import com.openeap.common.utils.excel.annotation.ExcelField;
 import com.openeap.common.utils.excel.fieldtype.RoleListType;
@@ -38,35 +40,33 @@ import com.openeap.common.utils.excel.fieldtype.RoleListType;
 /**
  * 用户Entity
  * @author lcw
- * @version 2013-3-15
+ * @version 2013-5-15
  */
 @Entity
 @Table(name = "sys_user")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class User extends BaseEntity {
+public class User extends DataEntity {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;		// 编号
-	private Area area;		// 归属区域
+	private Office company;	// 归属公司
 	private Office office;	// 归属部门
 	private String loginName;// 登录名
 	private String password;// 密码
+	private String no;		// 工号
 	private String name;	// 姓名
 	private String email;	// 邮箱
 	private String phone;	// 电话
 	private String mobile;	// 手机
-	private String remarks;	// 备注
 	private String userType;// 用户类型
-	private Date createDate;// 创建日期
-	private String delFlag;	// 删除标记（0：正常；1：删除）
 	private String loginIp;	// 最后登陆IP
 	private Date loginDate;	// 最后登陆日期
 	
 	private List<Role> roleList = Lists.newArrayList(); // 拥有角色列表
 
 	public User() {
-		this.createDate = new Date();
-		this.delFlag = DEL_FLAG_NORMAL;
+		super();
 	}
 	
 	public User(Long id) {
@@ -75,7 +75,7 @@ public class User extends BaseEntity {
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_sys_user")
 //	@SequenceGenerator(name = "seq_sys_user", sequenceName = "seq_sys_user")
 	@ExcelField(title="ID", type=1, align=2, sort=1)
@@ -88,25 +88,25 @@ public class User extends BaseEntity {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="area_id")
+	@JoinColumn(name="company_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	@NotNull(message="所属区域不能为空")
-	@ExcelField(title="所属区域", align=2, sort=10)
-	public Area getArea() {
-		return area;
+	@JsonIgnore
+	@NotNull(message="归属公司不能为空")
+	@ExcelField(title="归属公司", align=2, sort=20)
+	public Office getCompany() {
+		return company;
 	}
 
-	public void setArea(Area area) {
-		this.area = area;
+	public void setCompany(Office company) {
+		this.company = company;
 	}
-
+	
 	@ManyToOne
 	@JoinColumn(name="office_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	@NotNull(message="所属部门不能为空")
-	@ExcelField(title="所属部门", align=2, sort=20)
+	@JsonIgnore
+	@NotNull(message="归属部门不能为空")
+	@ExcelField(title="归属部门", align=2, sort=25)
 	public Office getOffice() {
 		return office;
 	}
@@ -125,6 +125,7 @@ public class User extends BaseEntity {
 		this.loginName = loginName;
 	}
 
+	@JsonIgnore
 	@Length(min=1, max=100)
 	public String getPassword() {
 		return password;
@@ -138,6 +139,16 @@ public class User extends BaseEntity {
 	@ExcelField(title="姓名", align=2, sort=40)
 	public String getName() {
 		return name;
+	}
+	
+	@Length(min=1, max=100)
+	@ExcelField(title="工号", align=2, sort=45)
+	public String getNo() {
+		return no;
+	}
+
+	public void setNo(String no) {
+		this.no = no;
 	}
 
 	public void setName(String name) {
@@ -174,14 +185,10 @@ public class User extends BaseEntity {
 		this.mobile = mobile;
 	}
 
-	@Length(min=0, max=255)
+	@Transient
 	@ExcelField(title="备注", align=1, sort=900)
 	public String getRemarks() {
 		return remarks;
-	}
-
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
 	}
 	
 	@Length(min=0, max=100)
@@ -194,24 +201,10 @@ public class User extends BaseEntity {
 		this.userType = userType;
 	}
 
-	@NotNull
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Transient
 	@ExcelField(title="创建时间", type=0, align=1, sort=90)
 	public Date getCreateDate() {
 		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
-	@Length(min=1, max=1)
-	public String getDelFlag() {
-		return delFlag;
-	}
-
-	public void setDelFlag(String delFlag) {
-		this.delFlag = delFlag;
 	}
 
 	@ExcelField(title="最后登录IP", type=1, align=1, sort=100)
@@ -223,7 +216,7 @@ public class User extends BaseEntity {
 		this.loginIp = loginIp;
 	}
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@ExcelField(title="最后登录日期", type=1, align=1, sort=110)
 	public Date getLoginDate() {
 		return loginDate;
@@ -233,14 +226,13 @@ public class User extends BaseEntity {
 		this.loginDate = loginDate;
 	}
 
-	//多对多定义
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "sys_user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
 	@Where(clause="del_flag='"+DEL_FLAG_NORMAL+"'")
 	@OrderBy("id") @Fetch(FetchMode.SUBSELECT)
 	@NotFound(action = NotFoundAction.IGNORE)
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	@NotEmpty
+	@JsonIgnore
 	@ExcelField(title="拥有角色", align=1, sort=800, fieldType=RoleListType.class)
 	public List<Role> getRoleList() {
 		return roleList;
@@ -251,6 +243,7 @@ public class User extends BaseEntity {
 	}
 
 	@Transient
+	@JsonIgnore
 	public List<Long> getRoleIdList() {
 		List<Long> roleIdList = Lists.newArrayList();
 		for (Role role : roleList) {
@@ -272,7 +265,6 @@ public class User extends BaseEntity {
 	/**
 	 * 用户拥有的角色名称字符串, 多个角色名称用','分隔.
 	 */
-	//非持久化属性.
 	@Transient
 	public String getRoleNames() {
 		return Collections3.extractToString(roleList, "name", ", ");

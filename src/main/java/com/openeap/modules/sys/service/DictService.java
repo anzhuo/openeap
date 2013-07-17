@@ -6,8 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,19 +15,17 @@ import com.openeap.common.service.BaseService;
 import com.openeap.common.utils.CacheUtils;
 import com.openeap.modules.sys.dao.DictDao;
 import com.openeap.modules.sys.entity.Dict;
+import com.openeap.modules.sys.utils.DictUtils;
 
 /**
  * 字典Service
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-5-29
  */
 @Service
 @Transactional(readOnly = true)
 public class DictService extends BaseService {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(DictService.class);
-	
 	@Autowired
 	private DictDao dictDao;
 	
@@ -42,11 +38,11 @@ public class DictService extends BaseService {
 		if (StringUtils.isNotEmpty(dict.getType())){
 			dc.add(Restrictions.eq("type", dict.getType()));
 		}
-		if (StringUtils.isNotEmpty(dict.getDesciption())){
-			dc.add(Restrictions.like("desciption", "%"+dict.getDesciption()+"%"));
+		if (StringUtils.isNotEmpty(dict.getDescription())){
+			dc.add(Restrictions.like("description", "%"+dict.getDescription()+"%"));
 		}
-		dc.add(Restrictions.eq("delFlag", Dict.DEL_FLAG_NORMAL));
-		dc.addOrder(Order.asc("type")).addOrder(Order.asc("sort"));
+		dc.add(Restrictions.eq(Dict.DEL_FLAG, Dict.DEL_FLAG_NORMAL));
+		dc.addOrder(Order.asc("type")).addOrder(Order.asc("sort")).addOrder(Order.desc("id"));
 		return dictDao.find(page, dc);
 	}
 	
@@ -57,13 +53,13 @@ public class DictService extends BaseService {
 	@Transactional(readOnly = false)
 	public void save(Dict dict) {
 		dictDao.save(dict);
-		CacheUtils.remove("dictList");
+		CacheUtils.remove(DictUtils.CACHE_DICT_MAP);
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(Long id) {
 		dictDao.deleteById(id);
-		CacheUtils.remove("dictList");
+		CacheUtils.remove(DictUtils.CACHE_DICT_MAP);
 	}
 	
 }

@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,12 @@ import com.openeap.common.beanvalidator.BeanValidators;
 import com.openeap.common.config.Global;
 import com.openeap.common.persistence.Page;
 import com.openeap.common.utils.DateUtils;
+import com.openeap.common.utils.StringUtils;
 import com.openeap.common.utils.excel.ExportExcel;
 import com.openeap.common.utils.excel.ImportExcel;
 import com.openeap.common.web.BaseController;
+import com.openeap.modules.sys.entity.Office;
+import com.openeap.modules.sys.entity.Role;
 import com.openeap.modules.sys.entity.User;
 import com.openeap.modules.sys.service.SystemService;
 import com.openeap.modules.sys.utils.UserUtils;
@@ -35,10 +37,10 @@ import com.openeap.modules.sys.utils.UserUtils;
 /**
  * 用户Controller
  * @author lcw
- * @version 2013-3-23
+ * @version 2013-5-31
  */
 @Controller
-@RequestMapping(value = Global.ADMIN_PATH+"/sys/user")
+@RequestMapping(value = "${adminPath}/sys/user")
 public class UserController extends BaseController {
 
 	@Autowired
@@ -64,10 +66,10 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
 	public String form(User user, Model model) {
-		if (user.getArea()==null){
-			user.setArea(UserUtils.getUser().getArea());
+		if (user.getCompany()==null || user.getCompany().getId()==null){
+			user.setCompany(UserUtils.getUser().getCompany());
 		}
-		if (user.getOffice()==null){
+		if (user.getOffice()==null || user.getOffice().getId()==null){
 			user.setOffice(UserUtils.getUser().getOffice());
 		}
 		model.addAttribute("user", user);
@@ -77,7 +79,10 @@ public class UserController extends BaseController {
 
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "save")
-	public String save(User user, String oldLoginName, String newPassword, Model model, RedirectAttributes redirectAttributes) {
+	public String save(User user, String oldLoginName, String newPassword, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+		// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
+		user.setCompany(new Office(StringUtils.toLong(request.getParameter("company.id"))));
+		user.setOffice(new Office(StringUtils.toLong(request.getParameter("office.id"))));
 		// 如果新密码为空，则不更换密码
 		if (StringUtils.isNotBlank(newPassword)) {
 			user.setPassword(SystemService.entryptPassword(newPassword));
@@ -89,21 +94,37 @@ public class UserController extends BaseController {
 			addMessage(model, "保存用户'" + user.getLoginName() + "'失败，登录名已存在");
 			return form(user, model);
 		}
+		// 角色数据有效性验证，过滤不在授权内的角色
+		List<Role> roleList = Lists.newArrayList();
+		List<Long> roleIdList = user.getRoleIdList();
+		for (Role r : systemService.findAllRole()){
+			if (roleIdList.contains(r.getId())){
+				roleList.add(r);
+			}
+		}
+		user.setRoleList(roleList);
+		// 保存用户信息
 		systemService.saveUser(user);
+		// 清除当前用户缓存
+		if (user.getLoginName().equals(UserUtils.getUser().getLoginName())){
+			UserUtils.getCacheMap().clear();
+		}
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
-		return "redirect:"+Global.ADMIN_PATH+"/sys/user/?repage";
+		return "redirect:"+Global.getAdminPath()+"/sys/user/?repage";
 	}
 	
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "delete")
 	public String delete(Long id, RedirectAttributes redirectAttributes) {
-		if (User.isAdmin(id)){
-			addMessage(redirectAttributes, "删除用户失败, 不允许删除超级管理员用户或编号空");
+		if (UserUtils.getUser().getId().equals(id)){
+			addMessage(redirectAttributes, "删除用户失败, 不允许删除当前用户");
+		}else if (User.isAdmin(id)){
+			addMessage(redirectAttributes, "删除用户失败, 不允许删除超级管理员用户");
 		}else{
 			systemService.deleteUser(id);
 			addMessage(redirectAttributes, "删除用户成功");
 		}
-		return "redirect:"+Global.ADMIN_PATH+"/sys/user/?repage";
+		return "redirect:"+Global.getAdminPath()+"/sys/user/?repage";
 	}
 	
 	@RequiresPermissions("sys:user:view")
@@ -117,7 +138,7 @@ public class UserController extends BaseController {
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导出用户失败！失败信息："+e.getMessage());
 		}
-		return "redirect:"+Global.ADMIN_PATH+"/sys/user/?repage";
+		return "redirect:"+Global.getAdminPath()+"/sys/user/?repage";
     }
 
 	@RequiresPermissions("sys:user:edit")
@@ -158,7 +179,7 @@ public class UserController extends BaseController {
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导入用户失败！失败信息："+e.getMessage());
 		}
-		return "redirect:"+Global.ADMIN_PATH+"/sys/user/?repage";
+		return "redirect:"+Global.getAdminPath()+"/sys/user/?repage";
     }
 	
 	@RequiresPermissions("sys:user:view")
@@ -172,7 +193,7 @@ public class UserController extends BaseController {
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导入模板下载失败！失败信息："+e.getMessage());
 		}
-		return "redirect:"+Global.ADMIN_PATH+"/sys/user/?repage";
+		return "redirect:"+Global.getAdminPath()+"/sys/user/?repage";
     }
 
 	@ResponseBody
@@ -192,12 +213,12 @@ public class UserController extends BaseController {
 	public String info(User user, Model model) {
 		User currentUser = UserUtils.getUser();
 		if (StringUtils.isNotBlank(user.getName())){
+			currentUser = UserUtils.getUser(true);
 			currentUser.setEmail(user.getEmail());
 			currentUser.setPhone(user.getPhone());
 			currentUser.setMobile(user.getMobile());
 			currentUser.setRemarks(user.getRemarks());
 			systemService.saveUser(currentUser);
-			currentUser = UserUtils.getUser();
 			model.addAttribute("message", "保存用户信息成功");
 		}
 		model.addAttribute("user", currentUser);

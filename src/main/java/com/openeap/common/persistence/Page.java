@@ -19,7 +19,7 @@ import com.openeap.common.utils.CookieUtils;
 /**
  * 分页类
  * @author lcw
- * @version 2013-3-15
+ * @version 2013-3-25
  * @param <T>
  */
 public class Page<T> {
@@ -45,7 +45,7 @@ public class Page<T> {
 	private String orderBy = ""; // 标准查询有效， 实例： updatedate desc, name asc
 	
 	private String funcName = "page"; // 设置点击页码调用的js函数名称，默认为page，在一页有多个分页对象时使用。
-
+	
 	/**
 	 * 构造方法
 	 * @param request 传递 repage 参数，来记住页码
@@ -322,7 +322,7 @@ public class Page<T> {
 	 * @param pageSize
 	 */
 	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize < 0 ? 10 : pageSize > 500 ? 500 : pageSize;
+		this.pageSize = pageSize <= 0 ? 10 : pageSize > 500 ? 500 : pageSize;
 	}
 
 	/**
@@ -501,4 +501,5 @@ public class Page<T> {
 		this.count = page.getTotalElements();
 		this.list = page.getContent();
 	}
+	
 }

@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -20,6 +19,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
@@ -28,17 +29,18 @@ import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import com.google.common.collect.Lists;
-import com.openeap.common.persistence.BaseEntity;
+import com.openeap.common.persistence.DataEntity;
 
 /**
  * 菜单Entity
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 @Entity
 @Table(name = "sys_menu")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Menu extends BaseEntity {
+public class Menu extends DataEntity {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;		// 编号
@@ -51,15 +53,13 @@ public class Menu extends BaseEntity {
 	private Integer sort; 	// 排序
 	private String isShow; 	// 是否在菜单中显示（1：显示；0：不显示）
 	private String permission; // 权限标识
-	private User user;		// 创建者
-	private String delFlag; // 删除标记（0：正常；1：删除）
 	
 	private List<Menu> childList = Lists.newArrayList();// 拥有子菜单列表
 	private List<Role> roleList = Lists.newArrayList(); // 拥有角色列表
 
 	public Menu(){
+		super();
 		this.sort = 30;
-		this.delFlag = DEL_FLAG_NORMAL;
 	}
 	
 	public Menu(Long id){
@@ -68,7 +68,7 @@ public class Menu extends BaseEntity {
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_sys_menu")
 //	@SequenceGenerator(name = "seq_sys_menu", sequenceName = "seq_sys_menu")
 	public Long getId() {
@@ -82,7 +82,6 @@ public class Menu extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="parent_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@NotNull
 	public Menu getParent() {
 		return parent;
@@ -164,27 +163,6 @@ public class Menu extends BaseEntity {
 		this.permission = permission;
 	}
 
-	@ManyToOne
-	@JoinColumn(name="user_id")
-	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
-	@Length(min=1, max=1)
-	public String getDelFlag() {
-		return delFlag;
-	}
-
-	public void setDelFlag(String delFlag) {
-		this.delFlag = delFlag;
-	}
-
 	@OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE},fetch=FetchType.LAZY,mappedBy="parent")
 	@Where(clause="del_flag='"+DEL_FLAG_NORMAL+"'")
 	@OrderBy(value="sort")
@@ -198,8 +176,7 @@ public class Menu extends BaseEntity {
 		this.childList = childList;
 	}
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "sys_role_menu", joinColumns = { @JoinColumn(name = "menu_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
+	@ManyToMany(mappedBy = "menuList", fetch=FetchType.LAZY)
 	@Where(clause="del_flag='"+DEL_FLAG_NORMAL+"'")
 	@OrderBy("id") @Fetch(FetchMode.SUBSELECT)
 	@NotFound(action = NotFoundAction.IGNORE)

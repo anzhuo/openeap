@@ -29,7 +29,7 @@ import com.openeap.modules.cms.utils.CmsUtils;
  * @version 2013-3-15
  */
 @Controller
-@RequestMapping(value = Global.FRONT_PATH)
+@RequestMapping(value = "${frontPath}")
 public class FrontGuestbookController extends BaseController{
 	
 	@Autowired
@@ -41,11 +41,11 @@ public class FrontGuestbookController extends BaseController{
 	@RequestMapping(value = "guestbook", method=RequestMethod.GET)
 	public String guestbook(@RequestParam(required=false, defaultValue="1") Integer pageNo,
 			@RequestParam(required=false, defaultValue="30") Integer pageSize, Model model) {
-		Site site = CmsUtils.getSite(1L);
+		Site site = CmsUtils.getSite(Site.defaultSiteId());
 		model.addAttribute("site", site);
 		Page<Guestbook> page = new Page<Guestbook>(pageNo, pageSize);
 		Guestbook guestbook = new Guestbook();
-		guestbook.setStatus(Guestbook.STATUS_RELEASE);
+		guestbook.setDelFlag(Guestbook.DEL_FLAG_NORMAL);
 		page = guestbookService.find(page, guestbook);
 		model.addAttribute("page", page);
 		return "modules/cms/front/themes/"+site.getTheme()+"/frontGuestbook";
@@ -60,7 +60,7 @@ public class FrontGuestbookController extends BaseController{
 			if (ValidateCodeServlet.validate(request, validateCode)){
 				guestbook.setIp(request.getRemoteAddr());
 				guestbook.setCreateDate(new Date());
-				guestbook.setStatus(Guestbook.STATUS_AUDIT);
+				guestbook.setDelFlag(Guestbook.DEL_FLAG_AUDIT);
 				guestbookService.save(guestbook);
 				addMessage(redirectAttributes, "提交成功，请等待管理员审核。");
 			}else{
@@ -69,7 +69,7 @@ public class FrontGuestbookController extends BaseController{
 		}else{
 			addMessage(redirectAttributes, "验证码不能为空。");
 		}
-		return "redirect:"+Global.FRONT_PATH+"/guestbook";
+		return "redirect:"+Global.getFrontPath()+"/guestbook";
 	}
 	
 }

@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +23,6 @@ import com.openeap.modules.cms.utils.CmsUtils;
 @Transactional(readOnly = true)
 public class SiteService extends BaseService {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(SiteService.class);
-	
 	@Autowired
 	private SiteDao siteDao;
 	
@@ -40,7 +35,7 @@ public class SiteService extends BaseService {
 		if (StringUtils.isNotEmpty(site.getName())){
 			dc.add(Restrictions.like("name", "%"+site.getName()+"%"));
 		}
-		dc.add(Restrictions.eq("delFlag", site.getDelFlag()));
+		dc.add(Restrictions.eq(Site.DEL_FLAG, site.getDelFlag()));
 		//dc.addOrder(Order.asc("id"));
 		return siteDao.find(page, dc);
 	}

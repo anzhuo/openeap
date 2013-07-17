@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.openeap.common.config.Global;
-import com.openeap.common.mapper.JsonMapper;
 import com.openeap.common.web.BaseController;
 import com.openeap.modules.sys.entity.Menu;
 import com.openeap.modules.sys.service.SystemService;
@@ -30,7 +29,7 @@ import com.openeap.modules.sys.service.SystemService;
  * @version 2013-3-23
  */
 @Controller
-@RequestMapping(value = Global.ADMIN_PATH+"/sys/menu")
+@RequestMapping(value = "${adminPath}/sys/menu")
 public class MenuController extends BaseController {
 
 	@Autowired
@@ -47,7 +46,7 @@ public class MenuController extends BaseController {
 
 	@RequiresPermissions("sys:menu:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(Menu menu, Model model) {
+	public String list(Model model) {
 		List<Menu> list = Lists.newArrayList();
 		List<Menu> sourcelist = systemService.findAllMenu();
 		Menu.sortList(list, sourcelist, 1L);
@@ -74,7 +73,7 @@ public class MenuController extends BaseController {
 		}
 		systemService.saveMenu(menu);
 		addMessage(redirectAttributes, "保存菜单'" + menu.getName() + "'成功");
-		return "redirect:"+Global.ADMIN_PATH+"/sys/menu/";
+		return "redirect:"+Global.getAdminPath()+"/sys/menu/";
 	}
 	
 	@RequiresPermissions("sys:menu:edit")
@@ -86,7 +85,7 @@ public class MenuController extends BaseController {
 			systemService.deleteMenu(id);
 			addMessage(redirectAttributes, "删除菜单成功");
 		}
-		return "redirect:"+Global.ADMIN_PATH+"/sys/menu/";
+		return "redirect:"+Global.getAdminPath()+"/sys/menu/";
 	}
 
 	@RequiresUser
@@ -95,10 +94,27 @@ public class MenuController extends BaseController {
 		return "modules/sys/menuTree";
 	}
 	
+	/**
+	 * 批量修改菜单排序
+	 */
+	@RequiresPermissions("sys:menu:edit")
+	@RequestMapping(value = "updateSort")
+	public String updateSort(Long[] ids, Integer[] sorts, RedirectAttributes redirectAttributes) {
+    	int len = ids.length;
+    	Menu[] menus = new Menu[len];
+    	for (int i = 0; i < len; i++) {
+    		menus[i] = systemService.getMenu(ids[i]);
+    		menus[i].setSort(sorts[i]);
+    		systemService.saveMenu(menus[i]);
+    	}
+    	addMessage(redirectAttributes, "保存菜单排序成功!");
+		return "redirect:"+Global.getAdminPath()+"/sys/menu/";
+	}
+	
 	@RequiresUser
 	@ResponseBody
 	@RequestMapping(value = "treeData")
-	public String treeData(@RequestParam(required=false) Long extId, HttpServletResponse response) {
+	public List<Map<String, Object>> treeData(@RequestParam(required=false) Long extId, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		List<Menu> list = systemService.findAllMenu();
@@ -112,6 +128,6 @@ public class MenuController extends BaseController {
 				mapList.add(map);
 			}
 		}
-		return JsonMapper.getInstance().toJson(mapList);
+		return mapList;
 	}
 }

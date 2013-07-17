@@ -8,11 +8,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.validator.constraints.Email;
@@ -24,10 +27,11 @@ import com.openeap.modules.sys.entity.User;
 /**
  * 留言Entity
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 @Entity
 @Table(name = "cms_guestbook")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Guestbook extends BaseEntity {
 	
@@ -44,11 +48,10 @@ public class Guestbook extends BaseEntity {
 	private User reUser; 		// 回复人
 	private Date reDate;	// 回复时间
 	private String reContent;// 回复内容
-	private String status;	// 删除标记（0：发布；1：作废；2：审核；）
+	private String delFlag;	// 删除标记删除标记（0：正常；1：删除；2：审核）
 
 	public Guestbook() {
-		this.createDate = new Date();
-		this.status = STATUS_RELEASE;
+		this.delFlag = DEL_FLAG_AUDIT;
 	}
 
 	public Guestbook(Long id){
@@ -56,8 +59,13 @@ public class Guestbook extends BaseEntity {
 		this.id = id;
 	}
 	
+	@PrePersist
+	public void prePersist(){
+		this.createDate = new Date();
+	}
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cms_guestbook")
 //	@SequenceGenerator(name = "seq_cms_guestbook", sequenceName = "seq_cms_guestbook")
 	public Long getId() {
@@ -143,7 +151,6 @@ public class Guestbook extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name="re_user_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	public User getReUser() {
 		return reUser;
 	}
@@ -169,12 +176,12 @@ public class Guestbook extends BaseEntity {
 	}
 
 	@Length(min=1, max=1)
-	public String getStatus() {
-		return status;
+	public String getDelFlag() {
+		return delFlag;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setDelFlag(String delFlag) {
+		this.delFlag = delFlag;
 	}
 	
 }

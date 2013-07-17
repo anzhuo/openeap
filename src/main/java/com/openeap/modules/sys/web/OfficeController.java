@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.openeap.common.config.Global;
-import com.openeap.common.mapper.JsonMapper;
 import com.openeap.common.web.BaseController;
 import com.openeap.modules.sys.entity.Office;
 import com.openeap.modules.sys.entity.User;
@@ -27,12 +26,12 @@ import com.openeap.modules.sys.service.OfficeService;
 import com.openeap.modules.sys.utils.UserUtils;
 
 /**
- * 部门Controller
+ * 机构Controller
  * @author lcw
- * @version 2013-3-23
+ * @version 2013-5-15
  */
 @Controller
-@RequestMapping(value = Global.ADMIN_PATH+"/sys/office")
+@RequestMapping(value = "${adminPath}/sys/office")
 public class OfficeController extends BaseController {
 
 	@Autowired
@@ -50,12 +49,12 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(Office office, Model model) {
-		User user = UserUtils.getUser();
-		if(user.isAdmin()){
+//		User user = UserUtils.getUser();
+//		if(user.isAdmin()){
 			office.setId(1L);
-		}else{
-			office.setId(user.getOffice().getId());
-		}
+//		}else{
+//			office.setId(user.getOffice().getId());
+//		}
 		model.addAttribute("office", office);
 		List<Office> list = Lists.newArrayList();
 		List<Office> sourcelist = officeService.findAll();
@@ -67,12 +66,13 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "form")
 	public String form(Office office, Model model) {
-		if (office.getParent()==null||office.getParent().getId()==null){
-			office.setParent(UserUtils.getUser().getOffice());
+		User user = UserUtils.getUser();
+		if (office.getParent()==null || office.getParent().getId()==null){
+			office.setParent(user.getOffice());
 		}
 		office.setParent(officeService.get(office.getParent().getId()));
 		if (office.getArea()==null){
-			office.setArea(UserUtils.getUser().getArea());
+			office.setArea(user.getOffice().getArea());
 		}
 		model.addAttribute("office", office);
 		return "modules/sys/officeForm";
@@ -85,40 +85,44 @@ public class OfficeController extends BaseController {
 			return form(office, model);
 		}
 		officeService.save(office);
-		addMessage(redirectAttributes, "保存部门'" + office.getName() + "'成功");
-		return "redirect:"+Global.ADMIN_PATH+"/sys/office/";
+		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
+		return "redirect:"+Global.getAdminPath()+"/sys/office/";
 	}
 	
 	@RequiresPermissions("sys:office:edit")
 	@RequestMapping(value = "delete")
 	public String delete(Long id, RedirectAttributes redirectAttributes) {
 		if (Office.isRoot(id)){
-			addMessage(redirectAttributes, "删除部门失败, 不允许删除顶级部门或编号空");
+			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 		}else{
 			officeService.delete(id);
-			addMessage(redirectAttributes, "删除部门成功");
+			addMessage(redirectAttributes, "删除机构成功");
 		}
-		return "redirect:"+Global.ADMIN_PATH+"/sys/office/";
+		return "redirect:"+Global.getAdminPath()+"/sys/office/";
 	}
 
 	@RequiresUser
 	@ResponseBody
 	@RequestMapping(value = "treeData")
-	public String treeData(@RequestParam(required=false) Long extId, HttpServletResponse response) {
+	public List<Map<String, Object>> treeData(@RequestParam(required=false) Long extId, @RequestParam(required=false) Long type,
+			@RequestParam(required=false) Long grade, HttpServletResponse response) {
 		response.setContentType("application/json; charset=UTF-8");
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		User user = UserUtils.getUser();
+//		User user = UserUtils.getUser();
 		List<Office> list = officeService.findAll();
 		for (int i=0; i<list.size(); i++){
 			Office e = list.get(i);
-			if (extId == null || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
+			if ((extId == null || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
+					&& (type == null || (type != null && Integer.parseInt(e.getType()) <= type.intValue()))
+					&& (grade == null || (grade != null && Integer.parseInt(e.getGrade()) <= grade.intValue()))){
 				Map<String, Object> map = Maps.newHashMap();
 				map.put("id", e.getId());
-				map.put("pId", !user.isAdmin() && e.getId().equals(user.getOffice().getId())?0:e.getParent()!=null?e.getParent().getId():0);
+//				map.put("pId", !user.isAdmin() && e.getId().equals(user.getOffice().getId())?0:e.getParent()!=null?e.getParent().getId():0);
+				map.put("pId", e.getParent()!=null?e.getParent().getId():0);
 				map.put("name", e.getName());
 				mapList.add(map);
 			}
 		}
-		return JsonMapper.getInstance().toJson(mapList);
+		return mapList;
 	}
 }

@@ -19,14 +19,19 @@ import com.openeap.modules.cms.entity.Article;
 public interface ArticleDao extends ArticleDaoCustom, CrudRepository<Article, Long> {
 
 	@Modifying
-	@Query("update Article set status=?2 where id = ?1")
-	public int updateStatus(Long id, String status);
+	@Query("update Article set delFlag=?2 where id = ?1")
+	public int updateDelFlag(Long id, String status);
 	
 	public List<Article> findByIdIn(Long[] ids);
 	
 	@Modifying
 	@Query("update Article set hits=hits+1 where id = ?1")
 	public int updateHitsAddOne(Long id);
+	
+	@Modifying
+	@Query("update Article set weight=0 where weight > 0 and weightDate < current_timestamp()")
+	public int updateExpiredWeight();
+	
 }
 
 /**

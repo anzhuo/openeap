@@ -1,8 +1,3 @@
-/*!
- * Copyright &copy; 2012-2013 <a href="https://www.openeap.com">openEAP</a> All rights reserved.
- *
- */
-
 // 引入js和css文件
 function include(id, path, file){
 	if (document.getElementById(id)==null){
@@ -30,6 +25,7 @@ function windowOpen(url, name, width, height){
 
 // 显示加载框
 function loading(mess){
+	top.$.jBox.tip.mess = null;
 	top.$.jBox.tip(mess,'loading',{opacity:0});
 }
 

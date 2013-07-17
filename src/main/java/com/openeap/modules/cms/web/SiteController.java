@@ -25,7 +25,7 @@ import com.openeap.modules.sys.utils.UserUtils;
  * @version 2013-3-23
  */
 @Controller
-@RequestMapping(value = Global.ADMIN_PATH+"/cms/site")
+@RequestMapping(value = "${adminPath}/cms/site")
 public class SiteController extends BaseController {
 
 	@Autowired
@@ -63,7 +63,7 @@ public class SiteController extends BaseController {
 		}
 		siteService.save(site);
 		addMessage(redirectAttributes, "保存站点'" + site.getName() + "'成功");
-		return "redirect:"+Global.ADMIN_PATH+"/cms/site/?repage";
+		return "redirect:"+Global.getAdminPath()+"/cms/site/?repage";
 	}
 	
 	@RequiresPermissions("cms:site:edit")
@@ -75,7 +75,7 @@ public class SiteController extends BaseController {
 			siteService.delete(id, isRe);
 			addMessage(redirectAttributes, (isRe!=null&&isRe?"恢复":"")+"删除站点成功");
 		}
-		return "redirect:"+Global.ADMIN_PATH+"/cms/site/?repage";
+		return "redirect:"+Global.getAdminPath()+"/cms/site/?repage";
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class SiteController extends BaseController {
 			UserUtils.putCache("siteId", id);
 		}
 		if (flag){
-			return "redirect:"+Global.ADMIN_PATH;
+			return "redirect:"+Global.getAdminPath();
 		}
 		return "modules/cms/siteSelect";
 	}

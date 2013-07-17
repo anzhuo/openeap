@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +22,6 @@ import com.openeap.modules.cms.entity.Comment;
 @Transactional(readOnly = true)
 public class CommentService extends BaseService {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(CommentService.class);
-	
 	@Autowired
 	private CommentDao commentDao;
 	
@@ -36,16 +31,13 @@ public class CommentService extends BaseService {
 	
 	public Page<Comment> find(Page<Comment> page, Comment comment) {
 		DetachedCriteria dc = commentDao.createDetachedCriteria();
-		if (StringUtils.isNotEmpty(comment.getModule())){
-			dc.add(Restrictions.eq("module", comment.getModule()));
-		}
 		if (comment.getContentId()!=null && comment.getContentId()>0){
 			dc.add(Restrictions.eq("contentId", comment.getContentId()));
 		}
 		if (StringUtils.isNotEmpty(comment.getTitle())){
 			dc.add(Restrictions.like("title", "%"+comment.getTitle()+"%"));
 		}
-		dc.add(Restrictions.eq("status", comment.getStatus()));
+		dc.add(Restrictions.eq(Comment.DEL_FLAG, comment.getDelFlag()));
 		dc.addOrder(Order.desc("id"));
 		return commentDao.find(page, dc);
 	}
@@ -57,7 +49,7 @@ public class CommentService extends BaseService {
 	
 	@Transactional(readOnly = false)
 	public void delete(Long id, Boolean isRe) {
-		commentDao.updateStatus(id, isRe!=null&&isRe?Comment.STATUS_AUDIT:Comment.STATUS_DELETE);
+		commentDao.updateDelFlag(id, isRe!=null&&isRe?Comment.DEL_FLAG_AUDIT:Comment.DEL_FLAG_DELETE);
 	}
 	
 }

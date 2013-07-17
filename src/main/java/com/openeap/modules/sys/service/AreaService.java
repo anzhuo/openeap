@@ -2,8 +2,6 @@ package com.openeap.modules.sys.service;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,15 +14,12 @@ import com.openeap.modules.sys.utils.UserUtils;
 /**
  * 区域Service
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-5-29
  */
 @Service
 @Transactional(readOnly = true)
 public class AreaService extends BaseService {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(AreaService.class);
-	
 	@Autowired
 	private AreaDao areaDao;
 	
@@ -49,13 +44,13 @@ public class AreaService extends BaseService {
 			e.setParentIds(e.getParentIds().replace(oldParentIds, area.getParentIds()));
 		}
 		areaDao.save(list);
-		UserUtils.removeCache("areaList");
+		UserUtils.removeCache(UserUtils.CACHE_AREA_LIST);
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(Long id) {
 		areaDao.deleteById(id, "%,"+id+",%");
-		UserUtils.removeCache("areaList");
+		UserUtils.removeCache(UserUtils.CACHE_AREA_LIST);
 	}
 	
 }

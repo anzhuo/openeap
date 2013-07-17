@@ -11,6 +11,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -27,6 +29,7 @@ import com.openeap.common.persistence.BaseEntity;
  */
 @Entity
 @Table(name = "cms_article_data")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ArticleData extends BaseEntity {
 
@@ -40,6 +43,7 @@ public class ArticleData extends BaseEntity {
 	private Article article;
 	
 	public ArticleData() {
+		super();
 		this.allowComment = YES;
 	}
 	
@@ -49,7 +53,7 @@ public class ArticleData extends BaseEntity {
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cms_article_data")
 //	@SequenceGenerator(name = "seq_cms_article_data", sequenceName = "seq_cms_article_data")
 	public Long getId() {

@@ -2,8 +2,6 @@ package com.openeap.modules.sys.service;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,17 +12,14 @@ import com.openeap.modules.sys.entity.Office;
 import com.openeap.modules.sys.utils.UserUtils;
 
 /**
- * 部门Service
+ * 机构Service
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-5-29
  */
 @Service
 @Transactional(readOnly = true)
 public class OfficeService extends BaseService {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(OfficeService.class);
-	
 	@Autowired
 	private OfficeDao officeDao;
 	
@@ -49,13 +44,13 @@ public class OfficeService extends BaseService {
 			e.setParentIds(e.getParentIds().replace(oldParentIds, office.getParentIds()));
 		}
 		officeDao.save(list);
-		UserUtils.removeCache("officeList");
+		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(Long id) {
 		officeDao.deleteById(id, "%,"+id+",%");
-		UserUtils.removeCache("officeList");
+		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}
 	
 }

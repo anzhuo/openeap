@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Service;
 
 import com.openeap.common.mapper.JsonMapper;
 import com.openeap.common.persistence.Page;
 import com.openeap.common.utils.CacheUtils;
+import com.openeap.common.utils.SpringContextHolder;
 import com.openeap.modules.cms.entity.Article;
 import com.openeap.modules.cms.entity.Category;
 import com.openeap.modules.cms.entity.Link;
@@ -23,38 +21,16 @@ import com.openeap.modules.cms.service.SiteService;
 /**
  * 内容管理工具类
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-5-29
  */
-@Service
-public class CmsUtils implements ApplicationContextAware {
+public class CmsUtils {
+	
+	private static SiteService siteService = SpringContextHolder.getBean(SiteService.class);
+	private static CategoryService categoryService = SpringContextHolder.getBean(CategoryService.class);
+	private static ArticleService articleService = SpringContextHolder.getBean(ArticleService.class);
+	private static LinkService linkService = SpringContextHolder.getBean(LinkService.class);
 
 	private static final String CMS_CACHE = "cmsCache";
-	
-	private static SiteService siteService;
-	private static CategoryService categoryService;
-	private static ArticleService articleService;
-	private static LinkService linkService;
-	
-	/**
-	 * 获得站点信息
-	 * @param id 站点编号
-	 */
-	public static Site getSite(long siteId){
-		long id = 1L;
-		if (siteId > 0){
-			id = siteId;
-		}
-		Site site = (Site)CacheUtils.get(CMS_CACHE, "site_"+id);
-		if (site==null){
-			site = siteService.get(id);
-			if (site!=null && Site.DEL_FLAG_NORMAL.equals(site.getDelFlag())){
-				CacheUtils.put(CMS_CACHE, "site_"+id, site);
-			}else{
-				site = siteService.get(1L);
-			}
-		}
-		return site;
-	}
 	
 	/**
 	 * 获得站点列表
@@ -69,6 +45,23 @@ public class CmsUtils implements ApplicationContextAware {
 			CacheUtils.put(CMS_CACHE, "siteList", siteList);
 		}
 		return siteList;
+	}
+	
+	/**
+	 * 获得站点信息
+	 * @param id 站点编号
+	 */
+	public static Site getSite(long siteId){
+		long id = 1L;
+		if (siteId > 0){
+			id = siteId;
+		}
+		for (Site site : getSiteList()){
+			if (site.getId() == id){
+				return site;
+			}
+		}
+		return new Site(id);
 	}
 	
 	/**
@@ -92,6 +85,15 @@ public class CmsUtils implements ApplicationContextAware {
 	}
 	
 	/**
+	 * 获取栏目
+	 * @param id 栏目编号
+	 * @return
+	 */
+	public static Category getCategory(long categoryId){
+		return categoryService.get(categoryId);
+	}
+	
+	/**
 	 * 获得栏目列表
 	 * @param siteId 站点编号
 	 * @param parentId 分类父编号
@@ -110,6 +112,15 @@ public class CmsUtils implements ApplicationContextAware {
 		page = categoryService.find(page, category);
 		return page.getList();
 	}
+
+	/**
+	 * 获取栏目
+	 * @param ids 栏目编号
+	 * @return
+	 */
+	public static List<Category> getCategoryListByIds(String categoryIds){
+		return categoryService.findByIds(categoryIds);
+	}
 	
 	/**
 	 * 获取文章
@@ -127,7 +138,8 @@ public class CmsUtils implements ApplicationContextAware {
 	 * @param number 获取数目
 	 * @param param  预留参数，例： key1:'value1', key2:'value2' ...
 	 * 			posid	推荐位（1：首页焦点图；2：栏目页文章推荐；）
-	 * 			thumb	缩略图（1：有缩略图的文章）
+	 * 			image	文章图片（1：有图片的文章）
+	 *          orderBy 排序字符串
 	 * @return
 	 */
 	public static List<Article> getArticleList(long siteId, long categoryId, int number, String param){
@@ -139,11 +151,15 @@ public class CmsUtils implements ApplicationContextAware {
 			if (new Integer(1).equals(map.get("posid")) || new Integer(2).equals(map.get("posid"))){
 				article.setPosid(String.valueOf(map.get("posid")));
 			}
-			if (new Integer(1).equals(map.get("thumb"))){
-				article.setThumb("1");
+			if (new Integer(1).equals(map.get("image"))){
+				article.setImage(Article.YES);
+			}
+			if (StringUtils.isNotBlank((String)map.get("orderBy"))){
+				page.setOrderBy((String)map.get("orderBy"));
 			}
 		}
-		page = articleService.find(page, article);
+		article.setDelFlag(Article.DEL_FLAG_NORMAL);
+		page = articleService.find(page, article, false);
 		return page.getList();
 	}
 	
@@ -171,16 +187,9 @@ public class CmsUtils implements ApplicationContextAware {
 			@SuppressWarnings({ "unused", "rawtypes" })
 			Map map = JsonMapper.getInstance().fromJson("{"+param+"}", Map.class);
 		}
-		page = linkService.find(page, link);
+		link.setDelFlag(Link.DEL_FLAG_NORMAL);
+		page = linkService.find(page, link, false);
 		return page.getList();
-	}
-	
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext){
-		siteService = (SiteService)applicationContext.getBean("siteService");
-		categoryService = (CategoryService)applicationContext.getBean("categoryService");
-		articleService = (ArticleService)applicationContext.getBean("articleService");
-		linkService = (LinkService)applicationContext.getBean("linkService");
 	}
 	
 	// ============== Cms Cache ==============

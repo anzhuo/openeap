@@ -9,33 +9,35 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.Length;
 
-import com.openeap.common.persistence.BaseEntity;
+import com.openeap.common.persistence.DataEntity;
 import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 站点Entity
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 @Entity
 @Table(name = "cms_site")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Site extends BaseEntity {
+public class Site extends DataEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;		// 编号
 	private String name;	// 站点名称
 	private String title;	// 站点标题
-	private String desciption;// 描述，填写有助于搜索引擎优化
+	private String description;// 描述，填写有助于搜索引擎优化
 	private String keywords;// 关键字，填写有助于搜索引擎优化
 	private String theme;	// 主题
 	private String copyright;// 版权信息
-	private String delFlag; // 删除标记（0：正常；1：删除）
 
 	public Site() {
-		this.delFlag = DEL_FLAG_NORMAL;
+		super();
 	}
 	
 	public Site(Long id){
@@ -44,7 +46,7 @@ public class Site extends BaseEntity {
 	}
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cms_site")
 //	@SequenceGenerator(name = "seq_cms_site", sequenceName = "seq_cms_site")
 	public Long getId() {
@@ -74,12 +76,12 @@ public class Site extends BaseEntity {
 	}
 	
 	@Length(min=0, max=255)
-	public String getDesciption() {
-		return desciption;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDesciption(String desciption) {
-		this.desciption = desciption;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Length(min=0, max=255)
@@ -108,21 +110,20 @@ public class Site extends BaseEntity {
 		this.copyright = copyright;
 	}
 
-	@Length(min=1, max=1)
-	public String getDelFlag() {
-		return delFlag;
+	/**
+	 * 获取默认站点ID
+	 */
+	@Transient
+	public static Long defaultSiteId(){
+		return 1L;
 	}
-
-	public void setDelFlag(String delFlag) {
-		this.delFlag = delFlag;
-	}
-
+	
 	/**
 	 * 判断是否为默认（主站）站点
 	 */
 	@Transient
 	public static boolean isDefault(Long id){
-		return id != null && id.equals(1L);
+		return id != null && id.equals(defaultSiteId());
 	}
 	
 	/**
@@ -131,7 +132,7 @@ public class Site extends BaseEntity {
 	@Transient
 	public static long getCurrentSiteId(){
 		Long siteId = (Long)UserUtils.getCache("siteId");
-		return siteId!=null?siteId:1L;
+		return siteId!=null?siteId:defaultSiteId();
 	}
 	
 }

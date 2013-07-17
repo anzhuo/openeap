@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-	
-  <display-name>openEAP</display-name>
-  
-  <!-- 加载Spring配置文件 -->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <display-name>openeap</display-name>
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
@@ -44,8 +39,6 @@
     <filter-name>openEntityManagerInViewFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  
-  <!-- Apache Shiro -->
   <filter>
     <filter-name>shiroFilter</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -58,8 +51,6 @@
     <filter-name>shiroFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  
-  <!-- SiteMesh -->
   <filter>
     <filter-name>sitemeshFilter</filter-name>
     <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
@@ -68,8 +59,6 @@
     <filter-name>sitemeshFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  
-  <!-- Spring MVC -->
   <servlet>
     <servlet-name>springServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -83,8 +72,18 @@
     <servlet-name>springServlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
-  
-  <!-- CKFinder -->
+  <servlet>
+    <servlet-name>DruidStatView</servlet-name>
+    <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+    <init-param>
+      <param-name>allow</param-name>
+      <param-value>127.0.0.1</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DruidStatView</servlet-name>
+    <url-pattern>/druid/*</url-pattern>
+  </servlet-mapping>
   <servlet>
     <servlet-name>CKFinderConnectorServlet</servlet-name>
     <servlet-class>com.openeap.common.web.CKFinderConnectorServlet</servlet-class>
@@ -122,8 +121,6 @@
     <filter-name>FileUploadFilter</filter-name>
     <url-pattern>/static/ckfinder/core/connector/java/connector.java</url-pattern>
   </filter-mapping>
-  
-  <!-- 随机验证码 -->
   <servlet>
     <servlet-name>ValidateCodeServlet</servlet-name>
     <servlet-class>com.openeap.common.servlet.ValidateCodeServlet</servlet-class>
@@ -132,13 +129,9 @@
     <servlet-name>ValidateCodeServlet</servlet-name>
     <url-pattern>/servlet/validateCodeServlet</url-pattern>
   </servlet-mapping>
-  
-  <!-- Session 配置 -->
   <session-config>
     <session-timeout>20</session-timeout>
   </session-config>
-  
-  <!-- 错误 页面配置 -->
   <error-page>
     <exception-type>java.lang.Throwable</exception-type>
     <location>/WEB-INF/views/error/500.jsp</location>
@@ -151,5 +144,4 @@
     <error-code>404</error-code>
     <location>/WEB-INF/views/error/404.jsp</location>
   </error-page>
-  
 </web-app>

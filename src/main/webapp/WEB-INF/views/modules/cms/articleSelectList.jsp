@@ -56,7 +56,7 @@
 		<label>标题：</label><form:input path="title" htmlEscape="false" maxlength="50" class="input-medium"/>&nbsp;
 		<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>&nbsp;&nbsp;
 	</form:form>
-	<table id="contentTable" class="table table-striped table-bordered ">
+	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead><tr><th style="text-align:center;">选择</th><th>栏目</th><th>标题</th><th>权重</th><th>点击数</th><th>发布者</th><th>更新时间</th></tr></thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="article">
@@ -66,7 +66,7 @@
 				<td><a href="${ctx}/cms/article/form?id=${article.id}" title="${article.title}" onclick="return view(this.href);">${fns:abbr(article.title,40)}</a></td>
 				<td>${article.weight}</td>
 				<td>${article.hits}</td>
-				<td>${article.user.name}</td>
+				<td>${article.createBy.name}</td>
 				<td><fmt:formatDate value="${article.updateDate}" type="both"/></td>
 			</tr>
 		</c:forEach>

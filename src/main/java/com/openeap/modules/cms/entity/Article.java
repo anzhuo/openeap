@@ -19,60 +19,55 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.Length;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import com.google.common.collect.Lists;
-import com.openeap.common.persistence.BaseEntity;
-import com.openeap.modules.sys.entity.User;
+import com.openeap.common.persistence.DataEntity;
 
 /**
  * 文章Entity
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-05-15
  */
 @Entity
 @Table(name = "cms_article")
+@DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Indexed @Analyzer(impl = IKAnalyzer.class)
-public class Article extends BaseEntity {
+public class Article extends DataEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;		// 编号
 	private Category category;// 分类编号
-	private User user;		// 发布者
 	private String title;	// 标题
 	private String color;	// 标题颜色（red：红色；green：绿色；blue：蓝色；yellow：黄色；orange：橙色）
-	private String thumb;	// 缩略图
+	private String image;	// 文章图片
 	private String keywords;// 关键字
-	private String desciption;// 描述、摘要
-	private String status;	// 状态状态（0：发布；1：删除；2：审核；）
+	private String description;// 描述、摘要
 	private Integer weight;	// 权重，越大越靠前
+	private Date weightDate;// 权重期限，超过期限，将weight设置为0
 	private Integer hits;	// 点击数
 	private String posid;	// 推荐位，多选（1：首页焦点图；2：栏目页文章推荐；）
-	private Date inputDate;	// 录入时间
-	private Date updateDate;// 更新时间
 
 	private ArticleData articleData;	//文章副表
     
 	public Article() {
-		this.status = STATUS_RELEASE;
+		super();
 		this.weight = 0;
 		this.hits = 0;
 		this.posid = "";
-		this.inputDate = new Date();
-		this.updateDate = new Date();
 	}
 
 	public Article(Long id){
@@ -86,7 +81,7 @@ public class Article extends BaseEntity {
 	}
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cms_article")
 //	@SequenceGenerator(name = "seq_cms_article", sequenceName = "seq_cms_article")
 	public Long getId() {
@@ -100,7 +95,6 @@ public class Article extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name="category_id")
 	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@NotNull
 	public Category getCategory() {
 		return category;
@@ -108,18 +102,6 @@ public class Article extends BaseEntity {
 
 	public void setCategory(Category category) {
 		this.category = category;
-	}
-
-	@ManyToOne
-	@JoinColumn(name="user_id")
-	@NotFound(action = NotFoundAction.IGNORE)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 	@Length(min=1, max=255)
@@ -142,12 +124,12 @@ public class Article extends BaseEntity {
 	}
 
 	@Length(min=0, max=255)
-	public String getThumb() {
-		return thumb;
+	public String getImage() {
+		return image;
 	}
 
-	public void setThumb(String thumb) {
-		this.thumb = thumb;
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 	@Length(min=0, max=255)
@@ -162,21 +144,12 @@ public class Article extends BaseEntity {
 
 	@Length(min=0, max=255)
 	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.NO)
-	public String getDesciption() {
-		return desciption;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDesciption(String desciption) {
-		this.desciption = desciption;
-	}
-
-	@Field(index=Index.YES, analyze=Analyze.NO, store=Store.YES)
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@NotNull
@@ -186,6 +159,14 @@ public class Article extends BaseEntity {
 
 	public void setWeight(Integer weight) {
 		this.weight = weight;
+	}
+
+	public Date getWeightDate() {
+		return weightDate;
+	}
+
+	public void setWeightDate(Date weightDate) {
+		this.weightDate = weightDate;
 	}
 
 	public Integer getHits() {
@@ -203,25 +184,6 @@ public class Article extends BaseEntity {
 
 	public void setPosid(String posid) {
 		this.posid = posid;
-	}
-
-	@NotNull
-	public Date getInputDate() {
-		return inputDate;
-	}
-
-	public void setInputDate(Date inputDate) {
-		this.inputDate = inputDate;
-	}
-
-	@Field(index=Index.YES, analyze=Analyze.NO, store=Store.YES)
-	@DateBridge(resolution = Resolution.DAY)
-	public Date getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
 	}
 
 	@OneToOne(mappedBy="article",cascade=CascadeType.ALL,optional=false) 

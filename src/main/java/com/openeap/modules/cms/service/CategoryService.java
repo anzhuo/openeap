@@ -1,37 +1,38 @@
 package com.openeap.modules.cms.service;
 
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.openeap.common.persistence.Page;
 import com.openeap.common.service.BaseService;
 import com.openeap.modules.cms.dao.CategoryDao;
 import com.openeap.modules.cms.entity.Category;
 import com.openeap.modules.cms.entity.Site;
 import com.openeap.modules.cms.utils.CmsUtils;
+import com.openeap.modules.sys.entity.User;
 import com.openeap.modules.sys.utils.UserUtils;
 
 /**
  * 栏目Service
  * @author lcw
- * @version 2013-01-15
+ * @version 2013-5-31
  */
 @Service
 @Transactional(readOnly = true)
 public class CategoryService extends BaseService {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(CategoryService.class);
+	public static final String CACHE_CATEGORY_LIST = "categoryList";
 	
 	@Autowired
 	private CategoryDao categoryDao;
@@ -40,32 +41,62 @@ public class CategoryService extends BaseService {
 		return categoryDao.findOne(id);
 	}
 	
-	public List<Category> findByUser(boolean isCurrentSite){
-		List<Category> list = UserUtils.getCategoryList();
+	@SuppressWarnings("unchecked")
+	public List<Category> findByUser(boolean isCurrentSite, String module){
+		
+		List<Category> list = (List<Category>)UserUtils.getCache(CACHE_CATEGORY_LIST);
+		if (list == null){
+			User user = UserUtils.getUser();
+			DetachedCriteria dc = categoryDao.createDetachedCriteria();
+			dc.createAlias("office", "office").createAlias("createBy", "user");
+			dc.add(dataScopeFilter(user, "office", "user"));
+			dc.add(Restrictions.or(Restrictions.isNull("href"),Restrictions.eq("href", "")));
+			dc.add(Restrictions.eq("delFlag", Category.DEL_FLAG_NORMAL));
+			dc.addOrder(Order.asc("site.id")).addOrder(Order.asc("sort"));
+			list = categoryDao.find(dc);
+			// 将没有父节点的节点，找到父节点
+			Set<Long> parentIdSet = Sets.newHashSet();
+			for (Category e : list){
+				if (e.getParent()!=null && e.getParent().getId()!=null){
+					boolean isExistParent = false;
+					for (Category e2 : list){
+						if (e.getParent().getId().longValue() == e2.getId().longValue()){
+							isExistParent = true;
+							break;
+						}
+					}
+					if (!isExistParent){
+						parentIdSet.add(e.getParent().getId());
+					}
+				}
+			}
+			if (parentIdSet.size() > 0){
+				dc = categoryDao.createDetachedCriteria();
+				dc.add(Restrictions.in("id", parentIdSet));
+				dc.add(Restrictions.eq("delFlag", Category.DEL_FLAG_NORMAL));
+				dc.addOrder(Order.asc("site.id")).addOrder(Order.asc("sort"));
+				list.addAll(0, categoryDao.find(dc));
+			}
+			UserUtils.putCache(CACHE_CATEGORY_LIST, list);
+		}
+		
 		if (isCurrentSite){
 			List<Category> categoryList = Lists.newArrayList(); 
 			for (Category e : list){
 				if (Category.isRoot(e.getId()) || (e.getSite()!=null && e.getSite().getId() !=null 
 						&& e.getSite().getId().longValue() == Site.getCurrentSiteId())){
-					categoryList.add(e);
+					if (StringUtils.isNotEmpty(module)){
+						if (module.equals(e.getModule()) || "".equals(e.getModule())){
+							categoryList.add(e);
+						}
+					}else{
+						categoryList.add(e);
+					}
 				}
 			}
 			return categoryList;
-		}else{
-			return list;
 		}
-	}
-
-	public List<Category> findByUserAndModule(String module){
-		List<Category> categoryList = Lists.newArrayList(); 
-		List<Category> list = UserUtils.getCategoryListByModule(module);
-		for (Category e : list){
-			if (Category.isRoot(e.getId()) || (e.getSite()!=null && e.getSite().getId() !=null 
-					&& e.getSite().getId().longValue() == Site.getCurrentSiteId())){
-				categoryList.add(e);
-			}
-		}
-		return categoryList;
+		return list;
 	}
 
 	public List<Category> findByParentId(Long parentId, Long siteId){
@@ -85,7 +116,7 @@ public class CategoryService extends BaseService {
 		if (StringUtils.isNotBlank(category.getInMenu())){
 			dc.add(Restrictions.eq("inMenu", category.getInMenu()));
 		}
-		dc.add(Restrictions.eq("delFlag", Category.DEL_FLAG_NORMAL));
+		dc.add(Restrictions.eq(Category.DEL_FLAG, Category.DEL_FLAG_NORMAL));
 		dc.addOrder(Order.asc("site.id")).addOrder(Order.asc("sort"));
 		return categoryDao.find(page, dc);
 //		page.setSpringPage(categoryDao.findByParentId(category.getParent().getId(), page.getSpringPage()));
@@ -98,9 +129,6 @@ public class CategoryService extends BaseService {
 		category.setParent(this.get(category.getParent().getId()));
 		String oldParentIds = category.getParentIds(); // 获取修改前的parentIds，用于更新子节点的parentIds
 		category.setParentIds(category.getParent().getParentIds()+category.getParent().getId()+",");
-		if (category.getId()==null){
-			category.setUser(UserUtils.getUser());
-		}
 		categoryDao.clear();
 		categoryDao.save(category);
 		// 更新子节点 parentIds
@@ -109,7 +137,7 @@ public class CategoryService extends BaseService {
 			e.setParentIds(e.getParentIds().replace(oldParentIds, category.getParentIds()));
 		}
 		categoryDao.save(list);
-		UserUtils.removeCache("categoryList");
+		UserUtils.removeCache(CACHE_CATEGORY_LIST);
 		CmsUtils.removeCache("mainNavList_"+category.getSite().getId());
 	}
 	
@@ -118,9 +146,21 @@ public class CategoryService extends BaseService {
 		Category category = get(id);
 		if (category!=null){
 			categoryDao.deleteById(id, "%,"+id+",%");
-			UserUtils.removeCache("categoryList");
+			UserUtils.removeCache(CACHE_CATEGORY_LIST);
 			CmsUtils.removeCache("mainNavList_"+category.getSite().getId());
 		}
+	}
+	
+	/**
+	 * 通过编号获取栏目列表
+	 */
+	public List<Category> findByIds(String ids) {
+		List<Category> list = Lists.newArrayList();
+		Long[] idss = (Long[])ConvertUtils.convert(StringUtils.split(ids,","), Long.class);
+		if (idss.length>0){
+			list = categoryDao.findByIdIn(idss);
+		}
+		return list;
 	}
 	
 }

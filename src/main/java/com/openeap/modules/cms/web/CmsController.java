@@ -6,17 +6,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.openeap.common.config.Global;
 import com.openeap.common.web.BaseController;
 import com.openeap.modules.cms.service.CategoryService;
 
 /**
  * 内容管理Controller
  * @author lcw
- * @version 2013-3-23
+ * @version 2013-4-21
  */
 @Controller
-@RequestMapping(value = Global.ADMIN_PATH+"/cms")
+@RequestMapping(value = "${adminPath}/cms")
 public class CmsController extends BaseController {
 
 	@Autowired
@@ -31,7 +30,7 @@ public class CmsController extends BaseController {
 	@RequiresPermissions("cms:view")
 	@RequestMapping(value = "tree")
 	public String tree(Model model) {
-		model.addAttribute("categoryList", categoryService.findByUser(true));
+		model.addAttribute("categoryList", categoryService.findByUser(true, null));
 		return "modules/cms/cmsTree";
 	}
 	

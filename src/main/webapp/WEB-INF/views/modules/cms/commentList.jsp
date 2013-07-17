@@ -6,11 +6,11 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		function view(href){
-			top.$.jBox.open('iframe:'+href,'查看文档',$(top.document).width()-220,$(top.document).height()-120,{
+			top.$.jBox.open('iframe:'+href,'查看文档',$(top.document).width()-220,$(top.document).height()-180,{
 				buttons:{"关闭":true},
 				loaded:function(h){
-					$(".jbox-content", top.document).css("overflow-y","hidden");
-					$(".nav,.form-actions,[class=btn]", h.find("iframe").contents()).hide();
+					//$(".jbox-content", top.document).css("overflow-y","hidden");
+					//$(".nav,.form-actions,[class=btn]", h.find("iframe").contents()).hide();
 				}
 			});
 			return false;
@@ -31,26 +31,25 @@
 	<form:form id="searchForm" modelAttribute="comment" action="${ctx}/cms/comment/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<form:hidden path="module"/><form:hidden path="contentId"/>
 		<label>文档标题：</label><form:input path="title" htmlEscape="false" maxlength="50" class="input-medium"/>&nbsp;
 		<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>&nbsp;&nbsp;
-		<label>状态：</label><form:radiobuttons onclick="$('#searchForm').submit();" path="status" items="${fns:getDictList('cms_status')}" itemLabel="label" itemValue="value" htmlEscape="false" />
+		<label>状态：</label><form:radiobuttons onclick="$('#searchForm').submit();" path="delFlag" items="${fns:getDictList('cms_del_flag')}" itemLabel="label" itemValue="value" htmlEscape="false" />
 	</form:form>
 	<tags:message content="${message}"/>
-	<table id="contentTable" class="table table-bordered ">
+	<table id="contentTable" class="table table-bordered table-condensed">
 		<thead><tr><th>评论内容</th><th>文档标题</th><th>评论人</th><th>评论IP</th><th>评论时间</th><th nowrap="nowrap">操作</th></tr></thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="comment">
 			<tr>
 				<td><a href="javascript:" onclick="$('#c_${comment.id}').toggle()">${fns:abbr(fns:replaceHtml(comment.content),40)}</a></td>
-				<td><a href="${ctx}/cms/${comment.module}/form?id=${comment.id}" title="${comment.title}" onclick="return view(this.href);">${fns:abbr(comment.title,40)}</a></td>
+				<td><a href="${pageContext.request.contextPath}${fns:getFrontPath()}/view-${comment.category.id}-${comment.contentId}${fns:getUrlSuffix()}" title="${comment.title}" onclick="return view(this.href);">${fns:abbr(comment.title,40)}</a></td>
 				<td>${comment.name}</td>
 				<td>${comment.ip}</td>
 				<td><fmt:formatDate value="${comment.createDate}" type="both"/></td>
 				<td><shiro:hasPermission name="cms:comment:edit">
-					<c:if test="${comment.status ne '2'}"><a href="${ctx}/cms/comment/delete?id=${comment.id}${comment.status ne 0?'&isRe=true':''}" 
-						onclick="return confirmx('确认要${comment.status ne 0?'恢复审核':'删除'}该审核吗？', this.href)">${comment.status ne 0?'恢复审核':'删除'}</a></c:if>
-					<c:if test="${comment.status eq '2'}"><a href="${ctx}/cms/comment/save?id=${comment.id}">审核通过</a></c:if></shiro:hasPermission>
+					<c:if test="${comment.delFlag ne '2'}"><a href="${ctx}/cms/comment/delete?id=${comment.id}${comment.delFlag ne 0?'&isRe=true':''}" 
+						onclick="return confirmx('确认要${comment.delFlag ne 0?'恢复审核':'删除'}该审核吗？', this.href)">${comment.delFlag ne 0?'恢复审核':'删除'}</a></c:if>
+					<c:if test="${comment.delFlag eq '2'}"><a href="${ctx}/cms/comment/save?id=${comment.id}">审核通过</a></c:if></shiro:hasPermission>
 				</td>
 			</tr>
 			<tr id="c_${comment.id}" style="background:#fdfdfd;display:none;"><td colspan="6">${fns:replaceHtml(comment.content)}</td></tr>

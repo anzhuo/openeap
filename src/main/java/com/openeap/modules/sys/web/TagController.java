@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.openeap.common.config.Global;
 import com.openeap.common.web.BaseController;
 
 /**
@@ -16,7 +15,7 @@ import com.openeap.common.web.BaseController;
  * @version 2013-3-23
  */
 @Controller
-@RequestMapping(value = Global.ADMIN_PATH+"/tag")
+@RequestMapping(value = "${adminPath}/tag")
 public class TagController extends BaseController {
 	
 	/**
@@ -31,6 +30,16 @@ public class TagController extends BaseController {
 		model.addAttribute("selectIds", request.getParameter("selectIds")); // 指定默认选中的ID
 		model.addAttribute("module", request.getParameter("module"));	// 过滤栏目模型（仅针对CMS的Category树）
 		return "modules/sys/tagTreeselect";
+	}
+	
+	/**
+	 * 图标选择标签（iconselect.tag）
+	 */
+	@RequiresUser
+	@RequestMapping(value = "iconselect")
+	public String iconselect(HttpServletRequest request, Model model) {
+		model.addAttribute("value", request.getParameter("value"));
+		return "modules/sys/tagIconselect";
 	}
 	
 }
