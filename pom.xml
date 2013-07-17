@@ -377,12 +377,20 @@
 			<version>${log4j.version}</version>
 		</dependency>
 		<!-- log4jdbc -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.lazyluke</groupId>
 			<artifactId>log4jdbc-remix</artifactId>
 			<version>0.2.7</version>
 			<scope>runtime</scope>
+		</dependency>-->
+		<dependency>
+			<groupId>org.lazyluke</groupId>
+			<artifactId>log4jdbc-remix</artifactId>
+			<version>0.2.7</version>
+			<scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/log4jdbc-remix-0.2.7.jar</systemPath>
 		</dependency>
+		
 		<!-- LOGGING end -->
 		
 		<!-- GENERAL UTILS begin -->
@@ -653,6 +661,7 @@
 			            <exclude>**/analyzer-2012_u6.jar</exclude>
 			            <exclude>**/apache-ant-zip.jar</exclude>
 			            <exclude>**/ckfinder*.jar</exclude>
+			            <exclude>**/log4jdbc-remix-0.2.7.jar</exclude>
 			          </excludes>
 			          <followSymlinks>false</followSymlinks>
 			        </fileset>
