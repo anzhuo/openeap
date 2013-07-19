@@ -4,7 +4,7 @@
 	<diskStore path="java.io.tmpdir/openeap/ehcache" />
 
 	<!-- DefaultCache setting. -->
-	<defaultCache maxEntriesLocalHeap="1000" eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="600"
+	<defaultCache maxEntriesLocalHeap="10000" eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="600"
 		overflowToDisk="true" maxEntriesLocalDisk="100000" />
 	
 	<cache name="sysCache" maxElementsInMemory="1000" eternal="true" overflowToDisk="true"/>
