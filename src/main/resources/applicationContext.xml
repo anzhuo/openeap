@@ -91,7 +91,7 @@
 	<!-- Production 环境 -->
  	<beans profile="production">
  		
- 	    <!-- 数据源配置, 使用 BoneCP 数据库连接池 -->
+ 	    <!-- 数据源配置, 使用 Druid 数据库连接池 -->
 		<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"> 
 		    <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
 		    <property name="driverClassName" value="${jdbc.driver}" />
