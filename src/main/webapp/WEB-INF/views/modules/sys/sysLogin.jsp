@@ -12,8 +12,8 @@
       .login_con .logo{ position:absolute; text-align:center; width:922px; left:0; top:12px}
       .tleft{text-align:left}
       .form-signin-heading{font-size:36px;margin-bottom:20px;color:#0663a2;}
-      .form-signin{width:250px; height:280px; padding:100px 0 0 378px;position:relative;text-align:left;width:300px;margin:0 auto 20px;}
-      .form-signin .checkbox{margin-bottom:10px;color:#0663a2;} .form-signin .input-label{font-size:16px;line-height:23px;}
+      .form-signin{width:258px; height:280px; padding:100px 0 0 367px;position:relative;text-align:left;margin:0 auto 20px;}
+      .form-signin .checkbox{margin-bottom:10px;color:#0663a2;} .form-signin .input-label{font-size:14px;line-height:23px;margin-bottom: 10px}
       .form-signin .input-block-level{font-size:16px;height:auto;margin-bottom:15px;padding:7px;*width:283px;*padding-bottom:0;_padding:7px 7px 9px 7px;}
       .form-signin .btn.btn-large{font-size:16px;} .form-signin #themeSwitch{position:absolute;right:15px;bottom:10px;}
       .form-signin div.validateCode {padding-bottom:15px;} .mid{vertical-align:middle;}
@@ -25,7 +25,9 @@
       .abtn-primary:hover{background-color: #0058a8; background-image: linear-gradient(to bottom, #039ae0, #0058a8); color: #FFFFFF;}
       .input-label { font-size: 16px;line-height: 23px;}
       .a_copyright{ font-family:Arial; position:absolute; width:922px; text-align:center; bottom:13px; letter-spacing:1px; color:#004686}
+      .a_copyright a{ color: #003399}
       #messageBox{margin-top: 10px}
+      #rememberMe{margin: 0}
     </style>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -66,7 +68,7 @@
                 <td><input type="text" id="username" name="username" class="input-medium required" value="${username}" width=""></td>
             </tr>
             <tr>
-                <td align="right"><label class="input-label" for="password">密&nbsp;&nbsp;码：</label></td>
+                <td align="right"><label class="input-label" for="password">密&nbsp;&nbsp;&nbsp;&nbsp;码：</label></td>
                 <td><input type="password" id="password" name="password" class="input-medium required"></td>
             </tr>
             <c:if test="${isValidateCodeLogin}"><div class="validateCode">
@@ -80,10 +82,6 @@
                 <td><label for="rememberMe" title="下次不需要再登录"><input type="checkbox" id="rememberMe" name="rememberMe"/> 记住我（公共场所慎用）</label></td>
             </tr>
             <tr>
-                <td>&nbsp;</td>
-                <td><input class="abtn-primary" type="submit" value="登 录"/>&nbsp;&nbsp;<input type="reset" value="重 置" class="abtn-primary"></td>
-            </tr>
-            <tr>
                 <td colspan="2">
                     <div class="header"><%String error = (String) request.getAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);%>
                         <div id="messageBox" class="alert alert-error <%=error==null?"hide":""%>"><button data-dismiss="alert" class="close">×</button>
@@ -92,6 +90,11 @@
                     </div>
                 </td>
             </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td><input class="abtn-primary" type="submit" value="登 录"/>&nbsp;&nbsp;<input type="reset" value="重 置" class="abtn-primary"></td>
+            </tr>
+
         </table>
 
 
@@ -103,7 +106,7 @@
 			<%--<!--[if lte IE 6]><script type="text/javascript">$('#themeSwitch').hide();</script><![endif]-->--%>
 		<%--</div>--%>
 	</form>
-    <div class="a_copyright">Copyright &copy; 2012-${fns:getConfig('copyrightYear')} <a href="${pageContext.request.contextPath}${fns:getFrontPath()}">${fns:getConfig('productName')}</a> - Powered By <a href="https://www.baidu.com" target="_blank">openEAP</a> ${fns:getConfig('version')}</div>
+    <div class="a_copyright">Copyright &copy; 2012-${fns:getConfig('copyrightYear')} <a href="${pageContext.request.contextPath}${fns:getFrontPath()}">${fns:getConfig('productName')}</a> - Powered By <a href="https://www.baidu.com" target="_blank">合道科技</a> ${fns:getConfig('version')}</div>
 </div>
 </body>
 </html>

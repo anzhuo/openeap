@@ -6,7 +6,6 @@
 	<meta name="decorator" content="default"/>
     <style type="text/css">
         html{background:#cbe7f6;}
-        .a_menutop{background:url(${ctxStatic}/images/addimg/menubj.png) no-repeat;height:28px;padding: 8px 0 0 40px;color: #003399; font-size: 16px;font-weight:bold}
     </style>
 	<script type="text/javascript"> 
 		$(document).ready(function() {
@@ -32,7 +31,7 @@
 	<div class="accordion" id="menu">
         <div class="a_menutop">功能菜单</div>
         <c:set var="menuList" value="${fns:getMenuList()}"/><c:set var="firstMenu" value="true"/><c:forEach items="${menuList}" var="menu" varStatus="idxStatus"><c:if test="${menu.parent.id eq (not empty param.parentId?param.parentId:1)&&menu.isShow eq 1}">
-		<div class="accordion-group">
+		<div class="accordion-group bornone">
 		    <div class="accordion-heading">
 		    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#menu" href="#collapse${menu.id}" title="${menu.remarks}"><i class="icon-chevron-${firstMenu?'down':'right'}"></i>&nbsp;${menu.name}</a>
 		    </div>

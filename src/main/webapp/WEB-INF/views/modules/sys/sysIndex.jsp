@@ -11,10 +11,6 @@
 		#header .brand {font-family:Helvetica, Georgia, Arial, sans-serif, 黑体;font-size:26px;padding-left:33px;}
 		#footer {margin:0;padding:3px 0 0 0;font-size:11px;text-align:center;border-top:2px solid #0663A2;}
 		#footer, #footer a {color:#999;}
-        .a_topcon{background:url(${ctxStatic}/images/addimg/topbj.jpg) repeat-x;}
-        .a_trig{background:url(${ctxStatic}/images/addimg/topright.jpg) top right no-repeat;}
-        .nav_addcss{height: 37px;background:url(${ctxStatic}/images/addimg/dhbj.jpg) repeat-x;padding-left: 171px}
-        .navbar .nav > li > a {background:url(${ctxStatic}/images/addimg/dhbj.jpg) no-repeat right -37px }
 	</style>
 	<script type="text/javascript"> 
 		$(document).ready(function() {
@@ -49,14 +45,14 @@
                                      <%--</ul>--%>
                                      <%--<!--[if lte IE 6]><script type="text/javascript">$('#themeSwitch').hide();</script><![endif]-->--%>
                                  <%--</li>--%>
-                                 <li class="dropdown">
-                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="个人信息">您好, <shiro:principal property="name"/></a>
-                                     <ul class="dropdown-menu">
-                                         <li><a href="${ctx}/sys/user/info" target="mainFrame"><i class="icon-user"></i>&nbsp; 个人信息</a></li>
-                                         <li><a href="${ctx}/sys/user/modifyPwd" target="mainFrame"><i class="icon-lock"></i>&nbsp;  修改密码</a></li>
-                                     </ul>
+                                 <li class="dropdown dtop">
+                                     <font class="dropdown-toggle" href="#">您好, <shiro:principal property="name"/></font>
+                                     <%--<ul class="dropdown-menu">--%>
+                                         <li><a href="${ctx}/sys/user/info" target="mainFrame"><i class="icot-user"></i>&nbsp; 个人信息</a></li>
+                                         <li><a href="${ctx}/sys/user/modifyPwd" target="mainFrame"><i class="icot-lock"></i>&nbsp;  修改密码</a></li>
+                                     <%--</ul>--%>
                                  </li>
-                                 <li><a href="${ctx}/logout" title="退出登录">退出</a></li>
+                                 <li><a href="${ctx}/logout" title="退出登录"><i class="icot-exit"></i>退出</a></li>
                                  <li>&nbsp;</li>
                              </ul>
                          </td>

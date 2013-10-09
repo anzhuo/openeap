@@ -2459,9 +2459,12 @@ table td[class*="span"], table th[class*="span"], .row-fluid table td[class*="sp
 }
 
 .dropup, .dropdown {
-    position: relative
+    position: relative;
 }
-
+.navbar .nav > li.dropdown {
+    float: right;
+    margin-right: 20px;
+}
 .dropdown-toggle {
     *margin-bottom: -3px
 }
@@ -2493,7 +2496,7 @@ table td[class*="span"], table th[class*="span"], .row-fluid table td[class*="sp
     z-index: 1000;
     display: none;
     float: left;
-    min-width: 160px;
+    min-width: 111px;
     padding: 5px 0;
     margin: 2px 0 0;
     list-style: none;
@@ -4005,13 +4008,13 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
     position: relative;
     left: 0;
     display: block;
-    float: left;
     margin: 0 10px 0 0
 }
 
 .navbar .nav.pull-right {
     float: right;
-    margin-right: 0
+    margin-right: 0;
+    padding: 10px 20px 0 0;
 }
 
 .navbar .nav>li {
@@ -4025,7 +4028,14 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
     text-decoration: none;
     text-shadow: 0 1px 0 #fff
 }
-
+.navbar .nav.pull-right>li>a{
+    background: none;
+    font-size: 12px;
+    padding: 5px 8px;
+    color: #3366cc;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #fff
+}
 .navbar .nav .dropdown-toggle .caret {
     margin-top: 8px
 }
@@ -4035,7 +4045,12 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
     text-decoration: none;
     background-color: transparent
 }
-
+.navbar .nav.pull-right>li>a:focus, .navbar .nav.pull-right>li>a:hover {
+    color: #ff3300;
+    text-decoration:none;
+    background-color: transparent
+}
+.navbar .nav.pull-right > li.dropdown > font{ font-weight:normal;color:#000;padding: 5px;font-size:12px; height: 29px;display: inline-block}
 .navbar .nav>.active>a, .navbar .nav>.active>a:hover, .navbar .nav>.active>a:focus {
     color: #555;
     text-decoration: none;
@@ -4146,8 +4161,8 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
 }
 
 .navbar .nav li.dropdown>.dropdown-toggle .caret {
-    border-top-color: #777;
-    border-bottom-color: #777
+    border-top-color: #003399;
+    border-bottom-color: #003399
 }
 
 .navbar .nav li.dropdown.open>.dropdown-toggle .caret, .navbar .nav li.dropdown.active>.dropdown-toggle .caret, .navbar .nav li.dropdown.open.active>.dropdown-toggle .caret {
@@ -5255,9 +5270,7 @@ a.label:hover, a.label:focus, a.badge:hover, a.badge:focus {
 .accordion-group {
     margin-bottom: 2px;
     border: 1px solid #e5e5e5;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px
+
 }
 
 .accordion-heading {
@@ -5474,7 +5487,7 @@ a.label:hover, a.label:focus, a.badge:hover, a.badge:focus {
 }
 .navbar .nav>li>a:focus, .navbar .nav>li>a:hover {
     color: #fff;
-    text-decoration: none;
+    text-decoration: underline;
     background-color: transparent
 }
 .navbar .nav>.active>a, .navbar .nav>.active>a:hover, .navbar .nav>.active>a:focus {
@@ -5492,6 +5505,31 @@ a.label:hover, a.label:focus, a.badge:hover, a.badge:focus {
     position: relative;
     left: 0;
     display: block;
-    float: left;
     margin: 0 10px 0 0
 }
+[class^="icot-"], [class*=" icot-"] {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-top: 1px;
+    *margin-right: .3em;
+    line-height: 14px;
+    vertical-align: text-top;
+    background-image: url("../img/ico.png");
+    background-repeat: no-repeat
+}
+.icot-user{background-position:0 0}
+.icot-lock{background-position:0 -39px}
+.icot-exit{background-position:0 -73px; padding-right: 5px}
+.navbar .nav > li > a.dropdown-toggle{background: url("../img/moren.png") no-repeat top right;height:24px;padding:4px 10px 0 13px; margin-top: 5px;border-left:1px solid #05568d }
+.navbar .nav > li > a.dropdown-toggle:hover, .navbar .nav li.dropdown.open > .dropdown-toggle, .navbar .nav li.dropdown.active > .dropdown-toggle, .navbar .nav li.dropdown.open.active > .dropdown-toggle{background: url("../img/moren.png") no-repeat right -29px; color: #fff}
+.a_menutop{background:url("../img/menubj.png") no-repeat;height:28px;padding: 8px 0 0 37px;color: #003399; font-size: 16px;font-weight:bold}
+.a_topcon{background:url("../img//topbj.jpg") repeat-x;}
+.a_trig{background:url("../img//topright.jpg") top right no-repeat;}
+.nav-collapse,.nav_addcss{height: 37px;background:url("../img//dhbj.jpg") repeat-x;padding-left: 171px}
+.navbar .nav > li > a {background:url("../img//dhbj.jpg") no-repeat right -37px }
+.navbar .nav > li.dtop{
+    float: left;
+    margin-right:5px;
+}
+.bornone{border-right: none}
