@@ -196,11 +196,14 @@ textarea {
 body {
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 20px;
     color: #333;
     background-color: #fff
 }
+body, label, input, button, select, textarea, .uneditable-input, .navbar-search .search-query {
+    font-family: Helvetica,Georgia,Arial,sans-serif,宋体;
+    font-size: 13px;}
 
 a {
     color: #08c;
@@ -982,7 +985,6 @@ legend small {
 }
 
 label, input, button, select, textarea {
-    font-size: 14px;
     font-weight: normal;
     line-height: 20px
 }
@@ -5536,7 +5538,7 @@ a.label:hover, a.label:focus, a.badge:hover, a.badge:focus {
 .icot-exit{background-position:0 -73px; padding-right: 5px}
 .navbar .nav > li > a.dropdown-toggle{background: url("../bootstrap/2.3.1/img/moren.png") no-repeat top right;height:24px;padding:4px 10px 0 13px; margin-top: 5px;border-left:1px solid #05568d }
 .navbar .nav > li > a.dropdown-toggle:hover, .navbar .nav li.dropdown.open > .dropdown-toggle, .navbar .nav li.dropdown.active > .dropdown-toggle, .navbar .nav li.dropdown.open.active > .dropdown-toggle{background: url("../bootstrap/2.3.1/img/moren.png") no-repeat right -29px; color: #fff}
-.a_menutop{background:url("../bootstrap/2.3.1/img/menubj.png") no-repeat;height:28px;padding: 8px 0 0 37px;color: #003399; font-size: 16px;font-weight:bold}
+.a_menutop{background:url("../bootstrap/2.3.1/img/menubj.png") no-repeat;height:28px;padding: 8px 0 0 37px;color: #003399; font-size: 14px;font-weight:bold}
 .a_topcon{background:url("../bootstrap/2.3.1/img/topbj.jpg") repeat-x;height: 77px; overflow: hidden}
 .a_trig{background:url("../bootstrap/2.3.1/img/topright.jpg") top right no-repeat;}
 .nav-collapse,.nav_addcss{height: 37px;background:url("../bootstrap/2.3.1/img/dhbj.jpg") repeat-x;padding-left: 171px}
@@ -5554,3 +5556,4 @@ a.label:hover, a.label:focus, a.badge:hover, a.badge:focus {
 .pagination .controls a{border:0}.pagination .controls input{border:0;color:#999;width:30px;padding:0;margin:-3px 0 0 0;text-align:center}
 .form-horizontal .controls{text-align:left}.form-horizontal .controls .error{background-position:0 2px}
 label{display:inline-block;margin-bottom:0}input[type="radio"],input[type="checkbox"]{margin:-2px 3px;*margin-top:1px}input[disabled],select[disabled],textarea[disabled],input[readonly],select[readonly],textarea[readonly]{cursor:auto;background-color:#f3f3f3}.input-prepend input,.input-append input,.input-prepend select,.input-append select,.input-prepend .uneditable-input,.input-append .uneditable-input{position:static}
+.nav-list li a{margin-top:5px;margin-bottom:5px;_padding-top:6px}.nav-list li a i{_margin-top:-1px}
