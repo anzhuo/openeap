@@ -7,6 +7,7 @@
  *
  * Designed and built with all the love in the world @twitter by @mdo and @fat.
  */
+
 .clearfix {
     *zoom: 1
 }
@@ -995,23 +996,8 @@ label {
     margin-bottom: 5px
 }
 
-select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
-    display: inline-block;
-    height: 20px;
-    padding: 4px 6px;
-    margin-bottom: 10px;
-    font-size: 14px;
-    line-height: 20px;
-    color: #555;
-    vertical-align: middle;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px
-}
 
-input, textarea, .uneditable-input {
-    width: 206px
-}
+
 
 textarea {
     height: auto
@@ -5551,7 +5537,7 @@ a.label:hover, a.label:focus, a.badge:hover, a.badge:focus {
 .navbar .nav > li > a.dropdown-toggle{background: url("../bootstrap/2.3.1/img/moren.png") no-repeat top right;height:24px;padding:4px 10px 0 13px; margin-top: 5px;border-left:1px solid #05568d }
 .navbar .nav > li > a.dropdown-toggle:hover, .navbar .nav li.dropdown.open > .dropdown-toggle, .navbar .nav li.dropdown.active > .dropdown-toggle, .navbar .nav li.dropdown.open.active > .dropdown-toggle{background: url("../bootstrap/2.3.1/img/moren.png") no-repeat right -29px; color: #fff}
 .a_menutop{background:url("../bootstrap/2.3.1/img/menubj.png") no-repeat;height:28px;padding: 8px 0 0 37px;color: #003399; font-size: 16px;font-weight:bold}
-.a_topcon{background:url("../bootstrap/2.3.1/img/topbj.jpg") repeat-x;}
+.a_topcon{background:url("../bootstrap/2.3.1/img/topbj.jpg") repeat-x;height: 77px; overflow: hidden}
 .a_trig{background:url("../bootstrap/2.3.1/img/topright.jpg") top right no-repeat;}
 .nav-collapse,.nav_addcss{height: 37px;background:url("../bootstrap/2.3.1/img/dhbj.jpg") repeat-x;padding-left: 171px}
 .navbar .nav > li > a {background:url("../bootstrap/2.3.1/img/dhbj.jpg") no-repeat right -37px }
@@ -5564,3 +5550,7 @@ a.label:hover, a.label:focus, a.badge:hover, a.badge:focus {
 }
 .navbar .nav{float:none}
 .bornone{border-right: none}
+.pagination .controls input{border:0;color:#999;width:30px;padding:0;margin:-3px 0 0 0;text-align:center}
+.pagination .controls a{border:0}.pagination .controls input{border:0;color:#999;width:30px;padding:0;margin:-3px 0 0 0;text-align:center}
+.form-horizontal .controls{text-align:left}.form-horizontal .controls .error{background-position:0 2px}
+label{display:inline-block;margin-bottom:0}input[type="radio"],input[type="checkbox"]{margin:-2px 3px;*margin-top:1px}input[disabled],select[disabled],textarea[disabled],input[readonly],select[readonly],textarea[readonly]{cursor:auto;background-color:#f3f3f3}.input-prepend input,.input-append input,.input-prepend select,.input-append select,.input-prepend .uneditable-input,.input-append .uneditable-input{position:static}
